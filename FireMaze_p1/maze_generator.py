@@ -40,7 +40,7 @@ class maze():
                     if(move not in visited):
                         stack.insert(0,move)
                         visited[move]=1
-            print(stack)
+            #print(stack)
         return 0
 
     def Astar(self,start:(int,int),end:(int,int)):
@@ -48,7 +48,6 @@ class maze():
         visited = {}
         heapq.heappush(heap,(0,start))
         visited[start] = 1
-        temp = 0
         while heap:
             curr = heapq.heappop(heap)[1]
             moves = [(curr[0]+1,curr[1]),(curr[0],curr[1]+1),
@@ -66,18 +65,15 @@ class maze():
                 if(move[0]==end[0] and move[1] == end[1]):
                     print('Found Solution')
                     return
-            temp +=1
-            if temp%200 == 0:
-                print(heap[0])
         print('No Solution')
 
     def BFS(self,start:(int,int),end:(int,int)):
-        stack=[]
+        queue=[]
         visited={}
-        stack.insert(0,start)
+        queue.insert(0,start)
         visited[start]=1
-        while stack :
-            curr=stack.pop(0)
+        while queue :
+            curr=queue.pop(0)
             if(curr==end):
                 return 1
             moves=[(curr[0]+1,curr[1]),(curr[0]-1,curr[1]),(curr[0],curr[1]+1),(curr[0],curr[1]-1)]
@@ -85,9 +81,8 @@ class maze():
                 check=self.check_valid(move)
                 if(check==0):
                     if(move not in visited):
-                        stack.append(move)
+                        queue.append(move)
                         visited[move]=1
-            print(stack)
         return 0    
 first=maze()
 first.make_maze(5,0.2)

@@ -1,5 +1,29 @@
 import maze_generator as mg
 import matplotlib.pyplot as plt
+import timeit
+
+def problem3():
+    dim = 70
+    times = 50
+    p = 0
+    first = mg.maze()
+    X = []
+    Y = []
+    while p <= 1:
+        a_sum = 0
+        b_sum = 0
+        for x in range(times):
+            first.make_maze(dim,p)
+            a_sum += first.Astar((0,0),(dim-1,dim-1))
+            b_sum += first.BFS((0,0),(dim-1,dim-1))
+        X.append(p)
+        Y.append(b_sum/times-a_sum/times)
+        p+=.01
+    plt.scatter(X,Y)
+    plt.show()
+
+problem3()
+        
 X=[]
 Y=[]
 first=mg.maze()
@@ -24,7 +48,7 @@ plt.scatter(X,Y) #Remember to to lable this graph
 plt.show()
 '''
 input vs time
-import timeit
+
 import matplotlib.pyplot as plt
 X=[]
 Y=[]
