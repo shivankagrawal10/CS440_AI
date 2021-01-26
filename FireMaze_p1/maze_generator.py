@@ -40,7 +40,26 @@ class maze():
                         visited[move]=1
             print(stack)
         return 0
+
+    def BFS(self,start:(int,int),end:(int,int)):
+        stack=[]
+        visited={}
+        stack.insert(0,start)
+        visited[start]=1
+        while stack :
+            curr=stack.pop(0)
+            if(curr==end):
+                return 1
+            moves=[(curr[0]+1,curr[1]),(curr[0]-1,curr[1]),(curr[0],curr[1]+1),(curr[0],curr[1]-1)]
+            for move in moves:
+                check=self.check_valid(move)
+                if(check==0):
+                    if(move not in visited):
+                        stack.append(move)
+                        visited[move]=1
+            print(stack)
+        return 0    
 first=maze()
 first.make_maze(5,0.2)
 print(first.maze)
-first.DFS((0,0),(first.dim-1,first.dim-1))
+first.BFS((0,0),(first.dim-1,first.dim-1))
