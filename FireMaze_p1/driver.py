@@ -16,9 +16,7 @@ while i<=1:
     i+=0.01
     print(float(success/times))
     Y.append(float(success/times))
-    plt.hist(X,Y)
-    plt.draw()
-    plt.pause(0.01)
+plt.scatter(X,Y)    
 plt.show()
 '''
 input vs time
