@@ -6,7 +6,7 @@ class maze():
         self.dim=dim
         self.p=p
         self.maze=np.zeros((dim,dim))
-        random.seed(123)
+        #random.seed(123)
         for i in range(dim):
             for j in range(dim):
                 if random.random() <= p:
@@ -47,6 +47,7 @@ class maze():
                         visited[temp]=1
             #print(stack)
         return 0
+<<<<<<< HEAD
 first=maze()
 n=10**3
 '''
@@ -71,3 +72,5 @@ for x in range(700,801,5):
     plt.draw()
     plt.pause(0.01)
 plt.show()
+=======
+>>>>>>> 09158b5f98d26f61772d0627891ee97bb041ee44
