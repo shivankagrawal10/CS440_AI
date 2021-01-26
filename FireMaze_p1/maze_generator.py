@@ -53,38 +53,47 @@ class maze():
             moves = [(curr[0]+1,curr[1]),(curr[0],curr[1]+1),
                      (curr[0]-1,curr[1]),(curr[0],curr[1]-1)]
             for move in moves:
-                if(move[0]<0 or move[1]<0 or move[0]>=self.dim or move[1]>=self.dim):
-                    continue
-                if(self.maze[move[0],move[1]] == 1):
-                    continue
-                if(move not in visited):
-                    dist_traveled = move[0]+move[1]
-                    dist_goal = math.sqrt((end[0]-move[0])**2 + (end[1]-move[1])**2)
-                    heapq.heappush(heap,(dist_traveled+dist_goal,move))
-                    visited[move] = 1
-                if(move[0]==end[0] and move[1] == end[1]):
+                check=self.check_valid(move)
+                if(check==0):
+                    if(move not in visited):
+                        dist_traveled = move[0]+move[1]
+                        dist_goal = math.sqrt((end[0]-move[0])**2 + (end[1]-move[1])**2)
+                        heapq.heappush(heap,(dist_traveled+dist_goal,move))
+                        visited[move] = 1
+                if(move==end):
                     print('Found Solution')
                     return
         print('No Solution')
 
     def BFS(self,start:(int,int),end:(int,int)):
         queue=[]
+        solution=[]
         visited={}
         queue.insert(0,start)
+        solution.append(f'{start}')
         visited[start]=1
         while queue :
             curr=queue.pop(0)
             if(curr==end):
-                return 1
+                rem=solution[0]
+                solution.append(f'{rem},{move}')
+                print(f'Shortest BFS path: {solution[0]}')
+                return len(visited)
             moves=[(curr[0]+1,curr[1]),(curr[0]-1,curr[1]),(curr[0],curr[1]+1),(curr[0],curr[1]-1)]
             for move in moves:
                 check=self.check_valid(move)
                 if(check==0):
                     if(move not in visited):
                         queue.append(move)
+                        rem=solution[0]
+                        solution.append(f'{rem},{move}')
                         visited[move]=1
-        return 0    
+            solution.pop(0)
+            print(queue)
+        print('No Solution')
+        return len(visited)    
 first=maze()
 first.make_maze(5,0.2)
 print(first.maze)
-first.BFS((0,0),(first.dim-1,first.dim-1))
+print(first.BFS((0,0),(first.dim-1,first.dim-1)))
+print(first.Astar((0,0),(first.dim-1,first.dim-1)))
