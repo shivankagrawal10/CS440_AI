@@ -17,6 +17,13 @@ class maze():
         self.maze[dim-1][dim-1]=0
         #print(self.maze)
 
+    def check_valid(self,coordinate):
+        if(coordinate[0]<0 or coordinate[1]<0)or(coordinate[0]>=self.dim or coordinate[1]>=self.dim):
+            return -1
+        elif(self.maze[coordinate[0]][coordinate[1]]==1):
+            return 1
+        return 0
+
     def DFS(self,start:(int,int),end:(int,int)):
         stack=[]
         visited={}
@@ -24,30 +31,16 @@ class maze():
         visited[start]=1
         while stack :
             curr=stack.pop(0)
-            if(curr[0]==end[0] and curr[1]==end[1]):
-                #print('Found Solution')
+            if(curr==end):
                 return 1
-            for move in range(-1,2,2):
-                temp=(curr[0]+move,curr[1]) #needs work
-                if(temp[0]<0 or temp[1]<0)or(temp[0]>=self.dim or temp[1]>=self.dim):
-                    pass
-                elif(self.maze[temp[0]][temp[1]]==1):
-                    continue
-                else:
-                    if(temp not in visited):
-                        stack.insert(0,temp)
-                        visited[temp]=1
-            for move in range(-1,2,2):
-                temp=(curr[0],curr[1]+move) #needs work
-                if(temp[0]<0 or temp[1]<0)or(temp[0]>=self.dim or temp[1]>=self.dim):
-                    pass
-                elif(self.maze[temp[0]][temp[1]]==1):
-                    continue
-                else:
-                    if(temp not in visited):
-                        stack.insert(0,temp)
-                        visited[temp]=1
-            #print(stack)
+            moves=[(curr[0]+1,curr[1]),(curr[0]-1,curr[1]),(curr[0],curr[1]+1),(curr[0],curr[1]-1)]
+            for move in moves:
+                check=self.check_valid(move)
+                if(check==0):
+                    if(move not in visited):
+                        stack.insert(0,move)
+                        visited[move]=1
+            print(stack)
         return 0
 
     def Astar(self,start:(int,int),end:(int,int)):
@@ -78,3 +71,25 @@ class maze():
                 print(heap[0])
         print('No Solution')
 
+    def BFS(self,start:(int,int),end:(int,int)):
+        stack=[]
+        visited={}
+        stack.insert(0,start)
+        visited[start]=1
+        while stack :
+            curr=stack.pop(0)
+            if(curr==end):
+                return 1
+            moves=[(curr[0]+1,curr[1]),(curr[0]-1,curr[1]),(curr[0],curr[1]+1),(curr[0],curr[1]-1)]
+            for move in moves:
+                check=self.check_valid(move)
+                if(check==0):
+                    if(move not in visited):
+                        stack.append(move)
+                        visited[move]=1
+            print(stack)
+        return 0    
+first=maze()
+first.make_maze(5,0.2)
+print(first.maze)
+first.BFS((0,0),(first.dim-1,first.dim-1))
