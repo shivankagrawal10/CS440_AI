@@ -1,14 +1,28 @@
-first=maze()
-n=10**3
-'''
-for i in range(1,n,5):
-    first.make_maze(i,.2)
-    first.DFS((0,0),(first.dim-1,first.dim-1))
-'''
+import maze_generator as mg
+import matplotlib.pyplot as plt
+X=[]
+Y=[]
+first=mg.maze()
+dim=70
 
+times=50
+i=0
+while i<=1:
+    success=0
+    X.append(i)
+    for x in range(times):
+        first.make_maze(dim,i)
+        success+=first.DFS((0,0),(first.dim-1,first.dim-1))
+    i+=0.01
+    print(float(success/times))
+    Y.append(float(success/times))
+    plt.hist(X,Y)
+    plt.draw()
+    plt.pause(0.01)
+plt.show()
 '''
 input vs time
-'''
+
 import timeit
 import matplotlib.pyplot as plt
 X=[]
@@ -25,3 +39,4 @@ for x in range(700,801,5):
     plt.draw()
     plt.pause(0.01)
 plt.show()
+'''
