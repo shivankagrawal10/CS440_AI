@@ -1,5 +1,7 @@
 import numpy as np
 import random
+import heapq
+import math
 class maze():
 
     def make_maze(self,dim : int, p : float):
@@ -47,30 +49,32 @@ class maze():
                         visited[temp]=1
             #print(stack)
         return 0
-<<<<<<< HEAD
-first=maze()
-n=10**3
-'''
-for i in range(1,n,5):
-    first.make_maze(i,.2)
-    #print(first.maze)
-    first.DFS((0,0),(first.dim-1,first.dim-1))
-'''
-import timeit
-import matplotlib.pyplot as plt
-X=[]
-Y=[]
-for x in range(700,801,5):
-    first.make_maze(x,.2)
-    start = timeit.default_timer()
-    first.DFS((0,0),(first.dim-1,first.dim-1))
-    stop = timeit.default_timer()
-    print(f'dim: {x},Time: {stop - start}')
-    X.append(x)
-    Y.append(stop-start)
-    plt.plot(X,Y)
-    plt.draw()
-    plt.pause(0.01)
-plt.show()
-=======
->>>>>>> 09158b5f98d26f61772d0627891ee97bb041ee44
+
+    def Astar(self,start:(int,int),end:(int,int)):
+        heap = []
+        visited = {}
+        heapq.heappush(heap,(0,start))
+        visited[start] = 1
+        temp = 0
+        while heap:
+            curr = heapq.heappop(heap)[1]
+            moves = [(curr[0]+1,curr[1]),(curr[0],curr[1]+1),
+                     (curr[0]-1,curr[1]),(curr[0],curr[1]-1)]
+            for move in moves:
+                if(move[0]<0 or move[1]<0 or move[0]>=self.dim or move[1]>=self.dim):
+                    continue
+                if(self.maze[move[0],move[1]] == 1):
+                    continue
+                if(move not in visited):
+                    dist_traveled = move[0]+move[1]
+                    dist_goal = math.sqrt((end[0]-move[0])**2 + (end[1]-move[1])**2)
+                    heapq.heappush(heap,(dist_traveled+dist_goal,move))
+                    visited[move] = 1
+                if(move[0]==end[0] and move[1] == end[1]):
+                    print('Found Solution')
+                    return
+            temp +=1
+            if temp%200 == 0:
+                print(heap[0])
+        print('No Solution')
+
