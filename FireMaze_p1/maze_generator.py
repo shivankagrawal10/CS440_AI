@@ -61,9 +61,10 @@ class maze():
                         heapq.heappush(heap,(dist_traveled+dist_goal,move))
                         visited[move] = 1
                 if(move==end):
-                    print('Found Solution')
-                    return
-        print('No Solution')
+                    #print('Found Solution')
+                    return(len(visited))
+        #print('No Solution')
+        return(len(visited))
 
     def BFS(self,start:(int,int),end:(int,int)):
         queue=[]
@@ -77,7 +78,7 @@ class maze():
             if(curr==end):
                 rem=solution[0]
                 solution.append(f'{rem},{move}')
-                print(f'Shortest BFS path: {solution[0]}')
+                #print(f'Shortest BFS path: {solution[0]}')
                 return len(visited)
             moves=[(curr[0]+1,curr[1]),(curr[0]-1,curr[1]),(curr[0],curr[1]+1),(curr[0],curr[1]-1)]
             for move in moves:
@@ -89,8 +90,6 @@ class maze():
                         solution.append(f'{rem},{move}')
                         visited[move]=1
             solution.pop(0)
-            print(queue)
-        print('No Solution')
         return len(visited)    
 first=maze()
 first.make_maze(5,0.2)

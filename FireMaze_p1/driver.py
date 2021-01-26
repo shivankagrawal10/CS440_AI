@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import timeit
 
 def problem3():
-    dim = 70
-    times = 50
+    dim = 25
+    times = 20
     p = 0
     first = mg.maze()
     X = []
