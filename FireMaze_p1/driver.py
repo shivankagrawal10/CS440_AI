@@ -16,7 +16,7 @@ while i<=1:
     i+=0.01
     print(float(success/times))
     Y.append(float(success/times))
-plt.scatter(X,Y)    
+plt.scatter(X,Y) #Remember to to lable this graph    
 plt.show()
 '''
 input vs time
