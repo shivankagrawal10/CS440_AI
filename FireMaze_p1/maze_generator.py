@@ -40,7 +40,7 @@ class maze():
                     if(move not in visited):
                         stack.insert(0,move)
                         visited[move]=1
-            print(stack)
+            #print(stack)
         return 0
 
     def Astar(self,start:(int,int),end:(int,int)):
@@ -71,12 +71,17 @@ class maze():
 
     def BFS(self,start:(int,int),end:(int,int)):
         queue=[]
+        solution=[]
         visited={}
         queue.insert(0,start)
+        solution.append(f'{start}')
         visited[start]=1
         while queue :
             curr=queue.pop(0)
             if(curr==end):
+                rem=solution[0]
+                solution.append(f'{rem},{move}')
+                print(f'Shortest BFS path: {solution[0]}')
                 return len(visited)
             moves=[(curr[0]+1,curr[1]),(curr[0]-1,curr[1]),(curr[0],curr[1]+1),(curr[0],curr[1]-1)]
             for move in moves:
@@ -84,10 +89,15 @@ class maze():
                 if(check==0):
                     if(move not in visited):
                         queue.append(move)
+                        rem=solution[0]
+                        solution.append(f'{rem},{move}')
                         visited[move]=1
+            solution.pop(0)
             print(queue)
+        print('No Solution')
         return len(visited)    
 first=maze()
 first.make_maze(5,0.2)
 print(first.maze)
 print(first.BFS((0,0),(first.dim-1,first.dim-1)))
+print(first.Astar((0,0),(first.dim-1,first.dim-1)))
