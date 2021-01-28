@@ -3,8 +3,7 @@ import random
 import heapq
 import math
 class maze():
-
-    def make_maze(self,dim : int, p : float):
+    def __init__(self,dim : int, p : float):
         self.dim=dim
         self.p=p
         self.maze=np.zeros((dim,dim))
@@ -30,66 +29,76 @@ class maze():
         visited[start]=1
         while stack :
             curr=stack.pop(0)
+            visited[curr]=1
             if(curr==end):
                 return 1
-            moves=[(curr[0]+1,curr[1]),(curr[0]-1,curr[1]),(curr[0],curr[1]+1),(curr[0],curr[1]-1)]
+            moves=[(curr[0]+1,curr[1]),(curr[0]-1,curr[1]),
+                   (curr[0],curr[1]+1),(curr[0],curr[1]-1)]
             for move in moves:
                 check=self.check_valid(move)
                 if(check==0):
                     if(move not in visited):
                         stack.insert(0,move)
-                        visited[move]=1
-            #print(stack)
+                        
         return 0
 
     def Astar(self,start:(int,int),end:(int,int)):
         heap = []
         visited = {}
+        fringed = {}
         heapq.heappush(heap,(0,start))
-        visited[start] = 1
+        fringed[start] = 1
         while heap:
             curr = heapq.heappop(heap)[1]
+            visited[curr] = 1
             moves = [(curr[0]+1,curr[1]),(curr[0],curr[1]+1),
                      (curr[0]-1,curr[1]),(curr[0],curr[1]-1)]
             for move in moves:
                 check=self.check_valid(move)
                 if(check==0):
-                    if(move not in visited):
+                    if(move not in fringed):
+                        fringed[move] = 1
                         dist_traveled = move[0]+move[1]
                         dist_goal = math.sqrt((end[0]-move[0])**2 + (end[1]-move[1])**2)
-                        heapq.heappush(heap,(dist_traveled+dist_goal,move))
-                        visited[move] = 1
+                        heapq.heappush(heap,(dist_traveled+dist_goal,move))    
                 if(move==end):
                     return(len(visited))
         return(len(visited))
 
     def BFS(self,start:(int,int),end:(int,int)):
         queue=[]
-        solution=[]
+        #solution=[]
         visited={}
+        ancestors = {}
         queue.insert(0,start)
-        solution.append(f'{start}')
-        visited[start]=1
+        #solution.append(f'{start}')
+        ancestors[start]=1
         while queue :
             curr=queue.pop(0)
+            visited[curr] = 1
             if(curr==end):
-                rem=solution[0]
-                solution.append(f'{rem},{move}')
+                #rem=solution[0]
+                #solution.append(f'{rem},{move}')
                 #print(f'Shortest BFS path: {solution[0]}')
+                ptr = curr
+                while not ptr  == 1:
+                    #print(ptr)
+                    ptr = ancestors[ptr]
                 return len(visited)
-            moves=[(curr[0]+1,curr[1]),(curr[0]-1,curr[1]),(curr[0],curr[1]+1),(curr[0],curr[1]-1)]
+            moves=[(curr[0]+1,curr[1]),(curr[0]-1,curr[1]),
+                   (curr[0],curr[1]+1),(curr[0],curr[1]-1)]
             for move in moves:
                 check=self.check_valid(move)
                 if(check==0):
-                    if(move not in visited):
+                    if(move not in ancestors):
+                        ancestors[move]=curr
                         queue.append(move)
-                        rem=solution[0]
-                        solution.append(f'{rem},{move}')
-                        visited[move]=1
-            solution.pop(0)
+                        #rem=solution[0]
+                        #solution.append(f'{rem},{move}')
+                        
+            #solution.pop(0)
         return len(visited)    
-first=maze()
-first.make_maze(5,0.2)
-print(first.maze)
-print(first.BFS((0,0),(first.dim-1,first.dim-1)))
-print(first.Astar((0,0),(first.dim-1,first.dim-1)))
+#first= maze(25,0.2)
+#print(first.maze)
+#print(first.BFS((0,0),(first.dim-1,first.dim-1)))
+#print(first.Astar((0,0),(first.dim-1,first.dim-1)))
