@@ -15,7 +15,6 @@ class maze():
                     self.maze[i][j] = 1
         self.maze[0][0]=0
         self.maze[dim-1][dim-1]=0
-        #print(self.maze)
 
     def check_valid(self,coordinate):
         if(coordinate[0]<0 or coordinate[1]<0)or(coordinate[0]>=self.dim or coordinate[1]>=self.dim):
@@ -61,9 +60,7 @@ class maze():
                         heapq.heappush(heap,(dist_traveled+dist_goal,move))
                         visited[move] = 1
                 if(move==end):
-                    #print('Found Solution')
                     return(len(visited))
-        #print('No Solution')
         return(len(visited))
 
     def BFS(self,start:(int,int),end:(int,int)):
