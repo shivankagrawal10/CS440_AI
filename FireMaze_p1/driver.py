@@ -1,7 +1,7 @@
 import maze_generator as mg
 import matplotlib.pyplot as plt
 import timeit
-
+'''
 def problem1(dim,p):
     first = mg.maze(dim,p)
 
@@ -43,24 +43,33 @@ def problem3():
     plt.show()
 
 problem3()
-
-
 '''
-input vs time
 
+# ASTAR (2300)
+#BFS (2500)
+# DFS(1000)
+#input vs time
+x=1000
+first=mg.maze(x,.3)
+start = timeit.default_timer()
+first.DFS((0,0),(first.dim-1,first.dim-1))
+stop = timeit.default_timer()
+print(f'dim: {x},Time: {stop - start}')
+'''
 import matplotlib.pyplot as plt
 X=[]
 Y=[]
-for x in range(700,801,5):
-    first.make_maze(x,.2)
+for x in range(800,1500,50):
+    first=mg.maze(x,.3)
     start = timeit.default_timer()
-    first.DFS((0,0),(first.dim-1,first.dim-1))
+    first.Astar((0,0),(first.dim-1,first.dim-1))
     stop = timeit.default_timer()
     print(f'dim: {x},Time: {stop - start}')
     X.append(x)
     Y.append(stop-start)
-    plt.plot(X,Y)
-    plt.draw()
-    plt.pause(0.01)
+    #plt.plot(X,Y)
+    #plt.draw()
+    #plt.pause(0.01)
+plt.plot(X,Y)
 plt.show()
 '''
