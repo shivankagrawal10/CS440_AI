@@ -41,7 +41,7 @@ class experiment:
 
 	def advance_agent(self, strategy, plan):
 		if strategy == constants.STRATEGY_1 and not plan:
-			plan, _ = self.maze.BFS(self.agent, self.end)
+			plan, _ = self.maze.Hot_Astar(self.agent, self.end)
 		elif strategy == constants.STRATEGY_2:
 			plan, _ = self.maze.BFS(self.agent, self.end)
 		elif strategy == constants.STRATEGY_3:
@@ -69,6 +69,7 @@ class experiment:
 					#print(prob)
 					if prob != 0 and random.random() <= prob:
 						clone[i][j] = constants.FIRE
+						self.maze.fireloc.append((i,j))
 		return clone
 
 	def start_fire(self):
@@ -80,7 +81,7 @@ class experiment:
 		y, x = random.choice(open_cells)
 		self.maze.grid[y][x] = constants.FIRE
 		self.maze.fireloc.append((y,x))
-
+		return ((y,x))
 exp = experiment(5, .2 , 1, (0, 0), (4, 4), 1)
 exp.run()
 

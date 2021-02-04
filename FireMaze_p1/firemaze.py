@@ -127,8 +127,9 @@ class maze:
 						except StopIteration:
 							break
 		return ([], constants.NO_PATH)
-
-	def HotAstar(self, start : (int, int), end : (int, int)):
+	
+	def Hot_Astar(self, start : (int, int), end : (int, int)):
+		'''
 		fringe = []
 		visited = {}
 		predecessors = {}
@@ -155,6 +156,15 @@ class maze:
 						except StopIteration:
 							break
 		return ([], constants.NO_PATH)
+		'''
+		curr=start
+		nei=get_neighbors(curr,self.is_open)
+		curr=nearest_fire(curr)
+		print(curr)
+		return get_neighbors(curr,self.is_open)
+	
+	def nearest_fire(self,start:(int,int)):
+		return min(self.fireloc,key=lambda x: abs(x[1]-start[1])+abs(x[0]-start[0]))
 
 	def valid_cell(self, coordinate):
 		if ((coordinate[0] < 0 or coordinate[1] < 0) 
