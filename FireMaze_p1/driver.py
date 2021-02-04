@@ -65,7 +65,7 @@ def problem4.5():
         while x < 50:
             exp2 = experiment(dim, .3,q, (0, 0), (dim-1, dim-1), 2)
             fire_coords = exp2.start_fire()
-            if exp2.maze.Astar((0,0),(dim-1,dim-1)) == constants.NO_PATH or exp2.maze.Astar(fire_coords,(0,0))==constants.NO_PATH):
+            if exp2.Astar((0,0),(dim-1,dim-1)) == constants.NO_PATH or exp2.Astar(fire_coords,(0,0))==constants.NO_PATH):
                 continue
             success_1+=exp2.run()
             x+=1
