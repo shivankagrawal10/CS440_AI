@@ -11,6 +11,7 @@ class maze:
 		self.p = p #Probability of blockers
 		self.q = q #Flammability factor
 		self.grid = np.zeros((dim, dim))
+		self.fireloc=[]
 		#random.seed(123)
 		for i in range(dim):
 			for j in range(dim):
@@ -123,6 +124,34 @@ class maze:
 								move_cost = cost + 1
 								priority = move_cost + self.get_dist_to(end, neighbor) + self.get_fire_cost(neighbor)
 								heapq.heappush(fringe, (priority, (move_cost, neighbor, curr))) 
+						except StopIteration:
+							break
+		return ([], constants.NO_PATH)
+
+	def HotAstar(self, start : (int, int), end : (int, int)):
+		fringe = []
+		visited = {}
+		predecessors = {}
+		heapq.heappush(fringe, (0, (0, start, constants.UNDEFINED)))
+		while fringe:
+			_, (cost, curr, pred) = heapq.heappop(fringe)
+			if curr in visited:
+				continue
+			else:
+				visited[curr] = True
+				predecessors[curr] = pred
+				if curr == end:
+					path = self.build_path(end, predecessors)
+					return (path, len(visited))
+				else:
+					neighbors = self.get_neighbors(curr, self.is_open)
+					while True:
+						try:
+							neighbor = next(neighbors)
+							if neighbor not in visited:
+								move_cost = cost + 1
+								priority = move_cost + self.get_dist_to(end, neighbor)
+								heapq.heappush(fringe, (priority, (move_cost, neighbor, curr)))
 						except StopIteration:
 							break
 		return ([], constants.NO_PATH)

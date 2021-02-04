@@ -79,6 +79,7 @@ class experiment:
 					open_cells.append((i, j))
 		y, x = random.choice(open_cells)
 		self.maze.grid[y][x] = constants.FIRE
+		self.maze.fireloc.append((y,x))
 
 exp = experiment(5, .2 , 1, (0, 0), (4, 4), 1)
 exp.run()
