@@ -1,6 +1,7 @@
 import maze_generator as mg
 import matplotlib.pyplot as plt
 import timeit
+import constants
 '''
 def problem1(dim,p):
     first = mg.maze(dim,p)
@@ -41,6 +42,41 @@ def problem3():
         p+=.01
     plt.scatter(X,Y)
     plt.show()
+  
+def problem4.5():
+    dim = 50
+    times = 50
+    q = 0
+    X = []
+    Y1 = []
+    Y2 = []
+    while q <= 1:
+        success_1 = 0
+        success_2 = 0
+        x = 0
+        while x < 50:
+            exp1 = experiment(dim, .3,q, (0, 0), (dim-1, dim-1), 1)
+            fire_coords = exp1.start_fire()
+            if exp1.maze.Astar((0,0),(dim-1,dim-1)) == constants.NO_PATH or exp1.maxe.Astar(fire_coords,(0,0))==constants.NO_PATH):
+                continue
+            success_1+=exp1.run()
+            x+=1
+        x = 0
+        while x < 50:
+            exp2 = experiment(dim, .3,q, (0, 0), (dim-1, dim-1), 2)
+            fire_coords = exp2.start_fire()
+            if exp2.maze.Astar((0,0),(dim-1,dim-1)) == constants.NO_PATH or exp2.maze.Astar(fire_coords,(0,0))==constants.NO_PATH):
+                continue
+            success_1+=exp2.run()
+            x+=1
+        X.append(q)
+        Y1.append(success_1/times)
+        Y2.append(success_2/times)
+        q+=.01
+    plt.scatter(X,Y1)
+    plt.scatter(X,Y2)
+    plt.show()
+            
 
 problem3()
 '''
