@@ -8,8 +8,8 @@ class maze:
 
 	def __init__(self, dim : int, p : float, q : float):
 		self.dim = dim
-		self.p = p
-		self.q = q
+		self.p = p #Probability of blockers
+		self.q = q #Flammability factor
 		self.grid = np.zeros((dim, dim))
 		#random.seed(123)
 		for i in range(dim):
