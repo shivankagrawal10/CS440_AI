@@ -2,7 +2,7 @@ import numpy as np
 import random
 import heapq
 import math
-import maze_generator as mg
+import firemaze as mg
 import constants
 
 class experiment:

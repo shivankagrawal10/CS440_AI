@@ -158,10 +158,14 @@ class maze:
 		return ([], constants.NO_PATH)
 		'''
 		curr=start
-		nei=get_neighbors(curr,self.is_open)
-		curr=nearest_fire(curr)
-		print(curr)
-		return get_neighbors(curr,self.is_open)
+		nei=self.get_neighbors(curr,self.is_open)
+		currmin=100
+		for i in nei:
+			if(currmin>abs(x[1]-start[1])+abs(x[0]-start[0]))
+			print(self.nearest_fire(curr))
+		#print(curr)
+		curr=
+		return self.Astar(,self.end)
 	
 	def nearest_fire(self,start:(int,int)):
 		return min(self.fireloc,key=lambda x: abs(x[1]-start[1])+abs(x[0]-start[0]))
