@@ -73,6 +73,7 @@ class experiment:
                         times=1
                 elif strategy == constants.STRATEGY_3:
                         times= self.maze.dist_to_nearest_fire(plan[0])
+                elif strategy == constants.STRATEGY_4:
                 for i in range(times):
                         #print(plan)
                         if self.agent == self.end:
@@ -146,12 +147,12 @@ class experiment:
         def simulation(self):
                 best = (0,0)
                 neighbors = self.maze.get_neighbors(self.agent,self.maze.is_open)
-                print(neighbors)
                 for n in list(neighbors):
                         p = self.get_probability(n)
                         if p > best[0]:
                                 best = (p,n)
-                return(best)
+                #best is tuple (p,n) for highest p path
+                return(best[1])#the coords of best option
 
         def get_probability(self,start:(int,int)):
                 success = 0
