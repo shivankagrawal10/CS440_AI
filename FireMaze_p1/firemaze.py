@@ -157,6 +157,27 @@ class maze:
 							break
 		return ([], constants.NO_PATH)
 	
+	def CTF(self, start : (int, int), end : (int, int)):
+		real_grid = self.grid
+		real_q = self.q
+		qs = [i * .1 for i in range(10, 0, -1) if (i * .1) >= self.q]
+		plan = []
+		signal = 0
+		for q in qs:
+			self.q = q
+			self.grid = self.pred_fire()
+			plan, signal = self.Astar(start, end)
+			#print("Q is ", self.q)
+			#print(plan)
+			if plan:
+				break
+			self.grid = real_grid
+		self.grid = real_grid
+		self.q = real_q
+		if not plan:
+			plan, signal = self.Astar(start, end)
+		return (plan, signal)
+		
 	def nearest_fire(self,curr:(int,int)):
 		return min(self.fireloc,key=lambda x: abs(x[1]-curr[1])+abs(x[0]-curr[0]))
 	def dist_to_nearest_fire(self,curr:(int,int)):

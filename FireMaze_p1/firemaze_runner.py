@@ -69,7 +69,7 @@ class experiment:
 		elif strategy == constants.STRATEGY_2:
 			times=1
 		elif strategy == constants.STRATEGY_3:
-			times= self.maze.dist_to_nearest_fire(plan[1])
+			times= self.maze.dist_to_nearest_fire(plan[0])
 		for i in range(times):
 			#print(plan)
 			if self.agent == self.end:
@@ -78,7 +78,7 @@ class experiment:
 			if plan:
 				plan.pop(0)
 				y, x = plan[0]
-				if self.maze.grid[y][x] == constants.FIRE or (self.maze.dist_to_nearest_fire(plan[0])==1 and (y,x) != self.end):
+				if self.maze.grid[y][x] == constants.FIRE: #or (self.maze.dist_to_nearest_fire(plan[0])<=1 and (y,x) != self.end):
 					plan = []
 				else:
 					old_y, old_x = self.agent
@@ -142,7 +142,7 @@ class experiment:
 		return ((y,x))
 
 for i in range(3):
-	exp = experiment(5, .2 , .4, (0, 0), (4, 4), 3)
+	exp = experiment(5, .2 , .2, (0, 0), (4, 4), 3)
 	exp.man_run()
 
 
