@@ -39,6 +39,64 @@ class experiment:
 		else:
 			print("Failure")
 
+	def man_run(self):
+		self.start_fire()
+		plan = []
+		while self.agent != self.end:
+			input("Press any key to continue")
+			print(self.maze.grid)
+			plan = self.generate_plan(self.strategy, plan)
+			if not plan:
+				break
+			plan = self.execute_plan(self.strategy,plan)
+			print("Agent moves to", self.agent)
+		if self.agent == self.end:
+			print("Success")
+		else:
+			print("Failure")
+	def generate_plan(self, strategy, plan):
+		if strategy == constants.STRATEGY_1 and not plan:
+			plan, _ = self.maze.Astar(self.agent, self.end)
+		elif strategy == constants.STRATEGY_2:
+			plan, _ = self.maze.Astar(self.agent, self.end)
+		elif strategy == constants.STRATEGY_3:
+			plan, _ = self.maze.Marco_Polo(self.agent, self.end)
+		return plan
+	def execute_plan(self,strategy,plan):
+		times=0
+		if strategy == constants.STRATEGY_1:
+			times=len(plan)
+		elif strategy == constants.STRATEGY_2:
+			times=1
+		elif strategy == constants.STRATEGY_3:
+			times= self.maze.dist_to_nearest_fire(plan[1])
+		for i in range(times):
+			#print(plan)
+			if self.agent == self.end:
+				plan=[]
+				break
+			if plan:
+				plan.pop(0)
+				y, x = plan[0]
+				if self.maze.grid[y][x] == constants.FIRE or (self.maze.dist_to_nearest_fire(plan[0])==1 and (y,x) != self.end):
+					plan = []
+				else:
+					old_y, old_x = self.agent
+					new_y, new_x = self.agent = plan[0]
+					self.maze.grid[old_y][old_x] = constants.OPEN
+					self.maze.grid[new_y][new_x] = constants.AGENT
+			else:
+				break
+			new_grid = self.advance_fire()
+			print("New Maze:")
+			print(new_grid)
+			y, x = self.agent
+			if new_grid[y][x] == constants.FIRE:
+				plan=[]
+				break
+			self.maze.grid = new_grid
+		return plan
+	
 	def advance_agent(self, strategy, plan):
 		if strategy == constants.STRATEGY_1 and not plan:
 			plan, _ = self.maze.Hot_Astar(self.agent, self.end)
@@ -82,7 +140,9 @@ class experiment:
 		self.maze.grid[y][x] = constants.FIRE
 		self.maze.fireloc.append((y,x))
 		return ((y,x))
-exp = experiment(5, .2 , 1, (0, 0), (4, 4), 1)
-exp.run()
+
+for i in range(3):
+	exp = experiment(5, .2 , .4, (0, 0), (4, 4), 3)
+	exp.man_run()
 
 

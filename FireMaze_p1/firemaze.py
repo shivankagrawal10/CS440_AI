@@ -128,8 +128,7 @@ class maze:
 							break
 		return ([], constants.NO_PATH)
 	
-	def Hot_Astar(self, start : (int, int), end : (int, int)):
-		'''
+	def Marco_Polo(self, start : (int, int), end : (int, int)):
 		fringe = []
 		visited = {}
 		predecessors = {}
@@ -151,25 +150,19 @@ class maze:
 							neighbor = next(neighbors)
 							if neighbor not in visited:
 								move_cost = cost + 1
-								priority = move_cost + self.get_dist_to(end, neighbor)
+								dist_to_fire = self.dist_to_nearest_fire(neighbor)
+								priority = move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
 								heapq.heappush(fringe, (priority, (move_cost, neighbor, curr)))
 						except StopIteration:
 							break
 		return ([], constants.NO_PATH)
-		'''
-		curr=start
-		nei=self.get_neighbors(curr,self.is_open)
-		currmin=100
-		for i in nei:
-			if(currmin>abs(x[1]-start[1])+abs(x[0]-start[0]))
-			print(self.nearest_fire(curr))
-		#print(curr)
-		curr=
-		return self.Astar(,self.end)
 	
-	def nearest_fire(self,start:(int,int)):
-		return min(self.fireloc,key=lambda x: abs(x[1]-start[1])+abs(x[0]-start[0]))
-
+	def nearest_fire(self,curr:(int,int)):
+		return min(self.fireloc,key=lambda x: abs(x[1]-curr[1])+abs(x[0]-curr[0]))
+	def dist_to_nearest_fire(self,curr:(int,int)):
+		fire = self.nearest_fire(curr)
+		dist=abs(fire[1]-curr[1])+abs(fire[0]-curr[0])
+		return dist
 	def valid_cell(self, coordinate):
 		if ((coordinate[0] < 0 or coordinate[1] < 0) 
 		or (coordinate[0] >= self.dim or coordinate[1] >= self.dim)):
