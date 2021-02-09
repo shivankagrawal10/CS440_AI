@@ -16,6 +16,7 @@ class experiment:
 		self.agent = (y, x)
 		self.maze.grid[y][x] = constants.AGENT
 		self.strategy = strategy
+		self.switch = False
 
 	def run(self):
 		self.start_fire()
@@ -52,8 +53,11 @@ class experiment:
 			print("Agent moves to", self.agent)
 		if self.agent == self.end:
 			print("Success")
+			return 1
 		else:
 			print("Failure")
+			return 0
+
 	def generate_plan(self, strategy, plan):
 		if strategy == constants.STRATEGY_1 and not plan:
 			plan, _ = self.maze.Astar(self.agent, self.end)
@@ -61,7 +65,14 @@ class experiment:
 			plan, _ = self.maze.Astar(self.agent, self.end)
 		elif strategy == constants.STRATEGY_3:
 			plan, _ = self.maze.Marco_Polo(self.agent, self.end)
+		elif strategy == constants.STRATEGY_4:
+			if not self.switch:
+				plan, _ = self.maze.Marco_Polo(self.agent, self.end)
+			else:
+				print("Switching plans")
+				plan, _ = self.Sims()
 		return plan
+
 	def execute_plan(self,strategy,plan):
 		times=0
 		if strategy == constants.STRATEGY_1:
@@ -70,6 +81,14 @@ class experiment:
 			times=1
 		elif strategy == constants.STRATEGY_3:
 			times= self.maze.dist_to_nearest_fire(plan[0])
+		elif strategy == constants.STRATEGY_4:
+			if not self.switch:
+				times = self.maze.dist_to_nearest_fire(plan[0])
+				if times <= 3:
+					self.switch = True
+				times = 1
+			else:
+				times = len(plan)
 		for i in range(times):
 			#print(plan)
 			if self.agent == self.end:
@@ -141,8 +160,43 @@ class experiment:
 		self.maze.fireloc.append((y,x))
 		return ((y,x))
 
-for i in range(3):
-	exp = experiment(5, .2 , .2, (0, 0), (4, 4), 3)
-	exp.man_run()
+	def Sims(self):
+		neighbors = self.maze.get_neighbors(self.agent, self.maze.is_open)
+		forks = []
+		i = 0
+		while True:
+			try:
+				neighbor = next(neighbors)
+				forks.append(experiment(self.maze.dim, self.maze.p, self.q, self.agent, self.end, constants.STRATEGY_2))
+				forks[i].maze.grid = self.maze.clone_grid()
+				old_y, old_x = forks[i].agent
+				new_y, new_x = neighbor
+				forks[i].maze.grid[old_y][old_x] = constants.OPEN
+				forks[i].maze.grid[new_y][new_x] = constants.AGENT
+				forks[i].agent = neighbor
+				forks[i].start = neighbor
+				forks[i].maze.fireloc = self.maze.fireloc #THIS WILL NEED TO CHANGE IF STRAT 3
+				forks[i].switch = True
+				i = i + 1
+			except StopIteration:
+				break
+		success_rates = [0, 0, 0, 0]
+		for i, fork in enumerate(forks):
+			maze_start_state = fork.maze.clone_grid()
+			agent_start_state = fork.agent
+			for j in range(21):
+				success_rates[i] += fork.man_run()
+				fork.maze.grid = maze_start_state.clone_grid()
+				fork.agent = agent_start_state
+		highest_sr = 0
+		highest_sr_index = 0
+		for i, sr in enumerate(success_rates):
+			if sr >= highest_sr:
+				highest_sr = sr
+				highest_sr_index = i
+		return forks[highest_sr_index].maze.Astar(forks[highest_sr_index].start, self.end)
+
+exp = experiment(10, .2, .2, (0, 0), (9, 9), 4)
+exp.man_run()
 
 
