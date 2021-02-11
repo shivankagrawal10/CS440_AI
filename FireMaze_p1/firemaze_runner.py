@@ -5,8 +5,9 @@ import math
 import firemaze as mg
 import constants
 import copy
-
+import matplotlib.pyplot as plt
 class experiment:
+<<<<<<< HEAD
         def __init__(self, dim : int, p : float, q : float, start : (int, int), end : (int, int), strategy):
                 self.maze = mg.maze(dim, p, q)
                 self.q = q
@@ -37,21 +38,26 @@ class experiment:
                                 return False
 
         def man_run(self):
-                self.start_fire()
-                plan = []
-                #print("Start grid")
-                #print(self.maze.grid)
-                while self.agent != self.end:
-                        plan = self.generate_plan(self.strategy, plan)
-                        if not plan:
-                                        break
-                        plan = self.execute_plan(self.strategy, plan)
-                if self.agent == self.end:
-                                #print("Success")
-                                return True
-                else:
-                                #print("Failure")
-                                return False
+		self.start_fire()
+		plan = []
+		#print("Start grid")
+		#print(self.maze.grid)
+		while self.agent != self.end:
+			self.maze.maze_visualize(self.agent,self.maze.grid)
+			#input("Press any key to continue")
+			print(self.maze.grid)
+			plan = self.generate_plan(self.strategy, plan)
+			if not plan:
+					break
+			plan = self.execute_plan(self.strategy, plan)
+		print(self.maze.grid)
+		self.maze.maze_visualize(self.agent,self.maze.grid)
+		if self.agent == self.end:
+				print("Success")
+				return True
+		else:
+				print("Failure")
+				return False
 
         def generate_plan(self, strategy, plan):
                 if self.maze.grid[self.agent[0]][self.agent[1]] == constants.FIRE:
