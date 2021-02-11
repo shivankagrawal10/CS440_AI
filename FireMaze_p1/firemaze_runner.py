@@ -149,7 +149,7 @@ class experiment:
 		open_cells = []
 		for i in range(self.maze.dim):
 				for j in range(self.maze.dim):
-						if self.maze.grid[i][j] == constants.OPEN:
+						if self.maze.grid[i][j] == constants.OPEN and ((i,j) !=self.end and (i,j)!=self.start):
 								open_cells.append((i, j))
 		y, x = random.choice(open_cells)
 		self.maze.grid[y][x] = constants.FIRE
@@ -214,8 +214,8 @@ class experiment:
 				highest_sr_index = i
 		return forks[highest_sr_index].maze.Astar(forks[highest_sr_index].start, self.end)
 
-#exp = experiment(10, .2, .2, (0, 0), (9, 9), 4)
-#exp.man_run()
+exp = experiment(10, .2, .2, (0, 0), (9, 9), 3)
+exp.man_run()
 
 
 
