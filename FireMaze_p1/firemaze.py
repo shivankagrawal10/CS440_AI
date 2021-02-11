@@ -3,11 +3,14 @@ import random
 import heapq
 import math
 import constants
+import matplotlib.pyplot as plt
+import matplotlib as mat
 
 class maze:
 
 	def __init__(self, dim : int, p : float, q : float):
 		self.dim = dim
+		self.end = (dim-1,dim-1)
 		self.p = p #Probability of blockers
 		self.q = q #Flammability factor
 		self.grid = np.zeros((dim, dim))
@@ -216,7 +219,18 @@ class maze:
 							break
 		self.grid = real_grid
 		return ([], constants.NO_PATH)
-		
+
+	def maze_visualize(self, agent, grid):
+		#colors={0:'white',1:'black',2:'red'}
+		cmap = mat.colors.LinearSegmentedColormap.from_list("", ["skyblue","gray","red","white"])
+		plt.imshow(grid,cmap)
+		plt.draw()
+		if(agent == self.end):
+			plt.show()
+		else:
+			plt.pause(3)
+		return
+
 	def nearest_fire(self, curr:(int, int)):
 		return min(self.fireloc, key = lambda x: abs(x[1] - curr[1]) + abs(x[0] - curr[0]))
 

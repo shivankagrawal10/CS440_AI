@@ -5,7 +5,7 @@ import math
 import firemaze as mg
 import constants
 import copy
-
+import matplotlib.pyplot as plt
 class experiment:
 
 	def __init__(self, dim : int, p : float, q : float, start : (int, int), end : (int, int), strategy):
@@ -41,15 +41,20 @@ class experiment:
 		#print("Start grid")
 		#print(self.maze.grid)
 		while self.agent != self.end:
+			self.maze.maze_visualize(self.agent,self.maze.grid)
+			#input("Press any key to continue")
+			print(self.maze.grid)
 			plan = self.generate_plan(self.strategy, plan)
 			if not plan:
 					break
 			plan = self.execute_plan(self.strategy, plan)
+		print(self.maze.grid)
+		self.maze.maze_visualize(self.agent,self.maze.grid)
 		if self.agent == self.end:
-				#print("Success")
+				print("Success")
 				return True
 		else:
-				#print("Failure")
+				print("Failure")
 				return False
 
 	def generate_plan(self, strategy, plan):
@@ -149,7 +154,7 @@ class experiment:
 		open_cells = []
 		for i in range(self.maze.dim):
 				for j in range(self.maze.dim):
-						if self.maze.grid[i][j] == constants.OPEN and ((i,j) !=self.end and (i,j)!=self.start):
+						if self.maze.grid[i][j] == constants.OPEN and ((i,j) !=self.end or (i,j)!=self.start):
 								open_cells.append((i, j))
 		y, x = random.choice(open_cells)
 		self.maze.grid[y][x] = constants.FIRE
@@ -214,9 +219,9 @@ class experiment:
 				highest_sr_index = i
 		return forks[highest_sr_index].maze.Astar(forks[highest_sr_index].start, self.end)
 
-exp = experiment(10, .2, .2, (0, 0), (9, 9), 3)
-exp.man_run()
-
+x=5
+exp = experiment(5, .2, .2, (0, 0), (x-1, x-1), 3)
+outcome=exp.man_run()
 
 
 #exp = experiment(5,.2,.2,(0,0),(4,4),3)
