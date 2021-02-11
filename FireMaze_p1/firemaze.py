@@ -19,6 +19,7 @@ class maze:
 					self.grid[i][j] = constants.BLOCKED
 		self.grid[0][0] = constants.OPEN
 		self.grid[dim - 1][dim - 1] = constants.OPEN
+		self.qs = [i * .1 for i in range(10, 0, -1) if (i * .1) >= self.q]
 
 	def DFS(self, start : (int,int), end : (int, int)):
 		fringe = []
@@ -160,10 +161,10 @@ class maze:
 	def CTF(self, start : (int, int), end : (int, int)):
 		real_grid = self.grid
 		real_q = self.q
-		qs = [i * .1 for i in range(10, 0, -1) if (i * .1) >= self.q]
 		plan = []
 		signal = 0
-		for q in qs:
+		while True:
+			q = self.qs[0]
 			self.q = q
 			self.grid = self.pred_fire()
 			plan, signal = self.Astar(start, end)
@@ -171,19 +172,59 @@ class maze:
 			#print(plan)
 			if plan:
 				break
+			else:
+				if q != real_q:
+					self.qs.pop(0)
+				else:
+					break
 			self.grid = real_grid
 		self.grid = real_grid
 		self.q = real_q
 		if not plan:
 			plan, signal = self.Astar(start, end)
 		return (plan, signal)
+
+	def Marco_Polo_Future(self, start : (int, int), end : (int, int)):
+		fringe = []
+		visited = {}
+		predecessors = {}
+		heapq.heappush(fringe, (0, (0, start, constants.UNDEFINED)))
+		real_grid = self.grid
+		self.grid = self.pred_fire()
+		while fringe:
+			_, (cost, curr, pred) = heapq.heappop(fringe)
+			if curr in visited:
+				continue
+			else:
+				visited[curr] = True
+				predecessors[curr] = pred
+				if curr == end:
+					self.grid = real_grid
+					path = self.build_path(end, predecessors)
+					return (path, len(visited))
+				else:
+					neighbors = self.get_neighbors(curr, self.is_open)
+					while True:
+						try:
+							neighbor = next(neighbors)
+							if neighbor not in visited:
+								move_cost = cost + 1
+								dist_to_fire = self.dist_to_nearest_fire(neighbor)
+								priority = move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
+								heapq.heappush(fringe, (priority, (move_cost, neighbor, curr)))
+						except StopIteration:
+							break
+		self.grid = real_grid
+		return ([], constants.NO_PATH)
 		
-	def nearest_fire(self,curr:(int,int)):
-		return min(self.fireloc,key=lambda x: abs(x[1]-curr[1])+abs(x[0]-curr[0]))
-	def dist_to_nearest_fire(self,curr:(int,int)):
+	def nearest_fire(self, curr:(int, int)):
+		return min(self.fireloc, key = lambda x: abs(x[1] - curr[1]) + abs(x[0] - curr[0]))
+
+	def dist_to_nearest_fire(self, curr: (int, int)):
 		fire = self.nearest_fire(curr)
-		dist=abs(fire[1]-curr[1])+abs(fire[0]-curr[0])
+		dist = abs(fire[1] - curr[1]) + abs(fire[0] - curr[0])
 		return dist
+		
 	def valid_cell(self, coordinate):
 		if ((coordinate[0] < 0 or coordinate[1] < 0) 
 		or (coordinate[0] >= self.dim or coordinate[1] >= self.dim)):
@@ -249,6 +290,19 @@ class maze:
 		if k != 0:
 			prob = 1 - (1 - self.q) ** k
 		return prob
+
+	def pred_fire(self):
+		clone = self.clone_grid()
+		for i in range(self.dim):
+			for j in range(self.dim):
+				if clone[i][j] != constants.FIRE and clone[i][j] != constants.BLOCKED:
+					prob = self.get_fire_prob((i, j))
+					#print(i, ",", j, "has the following:")
+					#print(self.q)
+					#print(prob)
+					if prob != 0 and random.random() <= prob:
+						clone[i][j] = constants.FIRE
+		return clone
 
 #first = maze(100, 0.3)
 #print(first.maze)
