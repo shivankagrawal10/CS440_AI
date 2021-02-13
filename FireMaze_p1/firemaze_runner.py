@@ -7,7 +7,6 @@ import constants
 import copy
 import matplotlib.pyplot as plt
 class experiment:
-<<<<<<< HEAD
         def __init__(self, dim : int, p : float, q : float, start : (int, int), end : (int, int), strategy):
                 self.maze = mg.maze(dim, p, q)
                 self.q = q
@@ -38,26 +37,26 @@ class experiment:
                                 return False
 
         def man_run(self):
-		self.start_fire()
-		plan = []
-		#print("Start grid")
-		#print(self.maze.grid)
-		while self.agent != self.end:
-			self.maze.maze_visualize(self.agent,self.maze.grid)
-			#input("Press any key to continue")
-			print(self.maze.grid)
-			plan = self.generate_plan(self.strategy, plan)
-			if not plan:
-					break
-			plan = self.execute_plan(self.strategy, plan)
-		print(self.maze.grid)
-		self.maze.maze_visualize(self.agent,self.maze.grid)
-		if self.agent == self.end:
-				print("Success")
-				return True
-		else:
-				print("Failure")
-				return False
+                self.start_fire()
+                plan = []
+                #print("Start grid")
+                #print(self.maze.grid)
+                while self.agent != self.end:
+                    #self.maze.maze_visualize(self.agent,self.maze.grid)
+                    #input("Press any key to continue")
+                    #print(self.maze.grid)
+                    plan = self.generate_plan(self.strategy, plan)
+                    if not plan:
+                            break
+                    plan = self.execute_plan(self.strategy, plan)
+                #print(self.maze.grid)
+                #self.maze.maze_visualize(self.agent,self.maze.grid)
+                if self.agent == self.end:
+                        #print("Success")
+                        return True
+                else:
+                        #print("Failure")
+                        return False
 
         def generate_plan(self, strategy, plan):
                 if self.maze.grid[self.agent[0]][self.agent[1]] == constants.FIRE:
@@ -83,14 +82,22 @@ class experiment:
                 elif strategy == constants.STRATEGY_3:
                                 times = self.maze.dist_to_nearest_fire(plan[0])
                 elif strategy == constants.STRATEGY_4:
-                                times = self.maze.dist_to_nearest_fire(plan[0])-3
+                                times = self.maze.dist_to_nearest_fire(plan[0])-2
                                 if times <= 0:
-                                        print("Switching")
-                                        _ , best_first_step = self.simulation()
-                                        plan, _ = self.maze.Astar(best_first_step, self.end)
-                                        print(plan)
-                                        if best_first_step != self.agent:
-                                                plan.insert(0, self.agent)
+                                        times = 1
+                                        #print("Switching")
+                                        if not self.q == 0:
+                                                prob , best_first_step = self.simulation()
+                                                plan, _ = self.maze.Astar(best_first_step, self.end)
+                                                if best_first_step != self.agent:
+                                                        plan.insert(0, self.agent)
+                                                if prob >= .95:
+                                                        times = 5
+                                        else:
+                                                plan,_ = self.maze.Astar(self.agent,self.end)
+                                        #print(self.agent)
+                                        #print(plan)
+                                        
                 for i in range(times):
                         #print(plan)
                         #input("Step?")
@@ -129,7 +136,8 @@ class experiment:
                 elif strategy == constants.STRATEGY_2:
                                 plan, _ = self.maze.Astar(self.agent, self.end)
                 elif strategy == constants.STRATEGY_3:
-                                plan, _ = self.maze.ADAAC(self.agent, self.end)
+                                plan, _ = self.maze.Marco_Polo(self.agent,self.end)
+                                #plan, _ = self.maze.ADAAC(self.agent, self.end)
                 elif strategy == constants.STRATEGY_4:
                                 plan, _ = self.maze.Marco_Polo(self.agent,self.end)
                 if plan:
@@ -177,15 +185,15 @@ class experiment:
 
         def get_probability(self, start: (int, int)):
                 success = 0
-                for i in range(5):
+                for i in range(20):
                         sim = copy.deepcopy(self)
-                        sim.strategy = constants.STRATEGY_1
+                        sim.strategy = constants.STRATEGY_3
                         sim.agent = start
                         sim.maze.grid[start[0]][start[1]] = constants.AGENT
                         sim.advance_fire()
                         if sim.run():
                                         success += 1
-                return (success / 5)
+                return (success/5)
 
 
         def Sims(self):

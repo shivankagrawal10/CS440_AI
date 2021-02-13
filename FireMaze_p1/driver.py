@@ -199,7 +199,7 @@ def problem6():
 #problem6()
 
 def problem_6():
-    dim = 15
+    dim = 20
     p = .3
     trials = 10
     start = (0, 0)
@@ -237,7 +237,6 @@ def problem_6():
                             break
                     success = exp3.man_run()
                 elif strategy == 4:
-                    print(x)
                     while True: 
                         exp4 = mr.experiment(dim, p, q, start, end, 4)
                         solvable = exp4.maze.DFS(start, end)
@@ -258,7 +257,7 @@ def problem_6():
             q += .01
         ax.scatter(X, Y, c=color, label=strategy, alpha=.5)
         print("Finished strategy", strategy)
-        avg[i] = sum(Y) / trials
+        avg[i] = sum(Y) / 100
         i += 1
     #plt.scatter(X, Y4, label = 'Strategy 4')
     plt.xlabel('Flammability Quotient ')

@@ -7,21 +7,21 @@ import matplotlib.pyplot as plt
 import matplotlib as mat
 
 class maze:
-	def __init__(self, dim : int, p : float, q : float):
-		self.dim = dim
-		self.end = (dim-1,dim-1)
-		self.p = p #Probability of blockers
-		self.q = q #Flammability factor
-		self.grid = np.zeros((dim, dim))
-		self.fireloc=[]
-		#random.seed(123)
-		for i in range(dim):
-			for j in range(dim):
-				if random.random() <= p:
-					self.grid[i][j] = constants.BLOCKED
-		self.grid[0][0] = constants.OPEN
-		self.grid[dim - 1][dim - 1] = constants.OPEN
-		self.qs = [i * .1 for i in range(10, 0, -1) if (i * .1) >= self.q]
+    def __init__(self, dim : int, p : float, q : float):
+        self.dim = dim
+        self.end = (dim-1,dim-1)
+        self.p = p #Probability of blockers
+        self.q = q #Flammability factor
+        self.grid = np.zeros((dim, dim))
+        self.fireloc=[]
+        #random.seed(123)
+        for i in range(dim):
+            for j in range(dim):
+                if random.random() <= p:
+                    self.grid[i][j] = constants.BLOCKED
+        self.grid[0][0] = constants.OPEN
+        self.grid[dim - 1][dim - 1] = constants.OPEN
+        self.qs = [i * .1 for i in range(10, 0, -1) if (i * .1) >= self.q]
 
 
     def DFS(self, start : (int,int), end : (int, int)):
@@ -187,52 +187,52 @@ class maze:
             plan, signal = self.Astar(start, end)
         return (plan, signal)
 
-	def Marco_Polo_Future(self, start : (int, int), end : (int, int)):
-		fringe = []
-		visited = {}
-		predecessors = {}
-		heapq.heappush(fringe, (0, (0, start, constants.UNDEFINED)))
-		real_grid = self.grid
-		self.grid = self.pred_fire()
-		while fringe:
-			_, (cost, curr, pred) = heapq.heappop(fringe)
-			if curr in visited:
-				continue
-			else:
-				visited[curr] = True
-				predecessors[curr] = pred
-				if curr == end:
-					self.grid = real_grid
-					path = self.build_path(end, predecessors)
-					return (path, len(visited))
-				else:
-					neighbors = self.get_neighbors(curr, self.is_open)
-					while True:
-						try:
-							neighbor = next(neighbors)
-							if neighbor not in visited:
-								move_cost = cost + 1
-								dist_to_fire = self.dist_to_nearest_fire(neighbor)
-								priority = move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
-								heapq.heappush(fringe, (priority, (move_cost, neighbor, curr)))
-						except StopIteration:
-							break
-		self.grid = real_grid
-		return ([], constants.NO_PATH)
+        def Marco_Polo_Future(self, start : (int, int), end : (int, int)):
+                fringe = []
+                visited = {}
+                predecessors = {}
+                heapq.heappush(fringe, (0, (0, start, constants.UNDEFINED)))
+                real_grid = self.grid
+                self.grid = self.pred_fire()
+                while fringe:
+                        _, (cost, curr, pred) = heapq.heappop(fringe)
+                        if curr in visited:
+                                continue
+                        else:
+                                visited[curr] = True
+                                predecessors[curr] = pred
+                                if curr == end:
+                                        self.grid = real_grid
+                                        path = self.build_path(end, predecessors)
+                                        return (path, len(visited))
+                                else:
+                                        neighbors = self.get_neighbors(curr, self.is_open)
+                                        while True:
+                                                try:
+                                                        neighbor = next(neighbors)
+                                                        if neighbor not in visited:
+                                                                move_cost = cost + 1
+                                                                dist_to_fire = self.dist_to_nearest_fire(neighbor)
+                                                                priority = move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
+                                                                heapq.heappush(fringe, (priority, (move_cost, neighbor, curr)))
+                                                except StopIteration:
+                                                        break
+                self.grid = real_grid
+                return ([], constants.NO_PATH)
 
-	def maze_visualize(self, agent, grid):
-		#colors={0:'white',1:'black',2:'red'}
-		cmap = mat.colors.LinearSegmentedColormap.from_list("", ["skyblue","gray","red","white"])
-		plt.imshow(grid,cmap)
-		plt.draw()
-		if(agent == self.end):
-			plt.show()
-		else:
-			plt.pause(3)
-		return
+    def maze_visualize(self, agent, grid):
+            #colors={0:'white',1:'black',2:'red'}
+            cmap = mat.colors.LinearSegmentedColormap.from_list("", ["skyblue","gray","red","white"])
+            plt.imshow(grid,cmap)
+            plt.draw()
+            if(agent == self.end):
+                    plt.show()
+            else:
+                    plt.pause(3)
+            return
 
-	def nearest_fire(self, curr:(int, int)):
-		return min(self.fireloc, key = lambda x: abs(x[1] - curr[1]) + abs(x[0] - curr[0]))
+    def nearest_fire(self, curr:(int, int)):
+            return min(self.fireloc, key = lambda x: abs(x[1] - curr[1]) + abs(x[0] - curr[0]))
 
     def dist_to_nearest_fire(self, curr: (int, int)):
         fire = self.nearest_fire(curr)
