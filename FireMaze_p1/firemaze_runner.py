@@ -49,8 +49,8 @@ class experiment:
             if not plan:
                 break
             plan = self.execute_plan(self.strategy, plan)
-        print(self.maze.grid)
-        self.maze.maze_visualize(self.agent,self.maze.grid,1)
+        #print(self.maze.grid)
+        #self.maze.maze_visualize(self.agent,self.maze.grid,1)
         if self.agent == self.end:
             print("Success")
             return True
@@ -90,7 +90,7 @@ class experiment:
                 print(plan)
                 if best_first_step != self.agent:
                         plan.insert(0, self.agent)
-        self.maze.maze_visualize(self.agent,self.maze.grid,0)
+        
         for i in range(times):
                 #print(plan)
                 #input("Step?")
@@ -120,7 +120,7 @@ class experiment:
                 if new_grid[y][x] == constants.FIRE:
                         plan = []
                         break
-                self.maze.maze_visualize(self.agent,self.maze.grid,0)
+                
 
         return plan
 
@@ -228,7 +228,7 @@ class experiment:
 
 test_dim = 25
 for i in range(3):
-    exp = experiment(test_dim, .2, .3, (0, 0), (test_dim-1, test_dim-1), 3)
+    exp = experiment(test_dim, .2, .3, (0, 0), (test_dim-1, test_dim-1), 4)
     print(exp.man_run())
 
 
