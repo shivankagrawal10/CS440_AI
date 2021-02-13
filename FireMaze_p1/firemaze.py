@@ -161,7 +161,7 @@ class maze:
 							break
 		return ([], constants.NO_PATH)
 	
-	def CTF(self, start : (int, int), end : (int, int)):
+	def CTF(self, start : (int, int), end : (int, int)): #Countdown to Freedom
 		real_grid = self.grid
 		real_q = self.q
 		plan = []
@@ -218,6 +218,38 @@ class maze:
 						except StopIteration:
 							break
 		self.grid = real_grid
+		return ([], constants.NO_PATH)
+
+	def Marco_Polo_Prob(self, start : (int, int), end : (int, int)):
+		fringe = []
+		visited = {}
+		predecessors = {}
+		heapq.heappush(fringe, (0, (0, start, constants.UNDEFINED)))
+		while fringe:
+			_, (cost, curr, pred) = heapq.heappop(fringe)
+			if curr in visited:
+				continue
+			else:
+				visited[curr] = True
+				predecessors[curr] = pred
+				if curr == end:
+					path = self.build_path(end, predecessors)
+					return (path, len(visited))
+				else:
+					neighbors = self.get_neighbors(curr, self.is_open)
+					while True:
+						try:
+							neighbor = next(neighbors)
+							if neighbor not in visited:
+								move_cost = cost + 1
+								dist_to_fire = self.dist_to_nearest_fire(neighbor)
+								try:
+									priority = (1-self.neighbor_prob[neighbor])*(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire)
+								except:	
+									priority = move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
+								heapq.heappush(fringe, (priority, (move_cost, neighbor, curr)))
+						except StopIteration:
+							break
 		return ([], constants.NO_PATH)
 
 	def maze_visualize(self, agent, grid,show):

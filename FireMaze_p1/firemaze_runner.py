@@ -17,6 +17,7 @@ class experiment:
         self.maze.grid[y][x] = constants.AGENT
         self.strategy = strategy
         self.switch = False
+        self.neighbor_prob={}
 
     def run(self):
         if not self.maze.fireloc:
@@ -44,7 +45,7 @@ class experiment:
         while self.agent != self.end:
             #self.maze.maze_visualize(self.agent,self.maze.grid,0)
             #input("Press any key to continue")
-            print(self.maze.grid)
+            #print(self.maze.grid)
             plan = self.generate_plan(self.strategy, plan)
             if not plan:
                 break
@@ -52,10 +53,10 @@ class experiment:
         #print(self.maze.grid)
         #self.maze.maze_visualize(self.agent,self.maze.grid,1)
         if self.agent == self.end:
-            print("Success")
+            #print("Success")
             return True
         else:
-            print("Failure")
+            #print("Failure")
             return False
 
     def generate_plan(self, strategy, plan):
@@ -82,15 +83,18 @@ class experiment:
         elif strategy == constants.STRATEGY_3:
             times = self.maze.dist_to_nearest_fire(plan[0])
         elif strategy == constants.STRATEGY_4:
-            times = self.maze.dist_to_nearest_fire(plan[0])-3
-            if times <= 0:
-                print("Switching")
-                _ , best_first_step = self.simulation()
-                plan, _ = self.maze.Astar(best_first_step, self.end)
-                print(plan)
-                if best_first_step != self.agent:
-                        plan.insert(0, self.agent)
-        
+            times = int((self.maze.dist_to_nearest_fire(plan[0]))/2)
+            if times <= 1:
+                #print("Switching")
+                best_prob , best_first_step = self.simulation()
+                plan,_ = self.maze.Marco_Polo_Prob(self.agent, self.end)
+                #plan, _ = self.maze.Astar(best_first_step, self.end)
+                
+                #print(plan)
+                
+                #if best_first_step != self.agent:
+                #        plan.insert(0, self.agent)
+                times=1
         for i in range(times):
                 #print(plan)
                 #input("Step?")
@@ -173,13 +177,15 @@ class experiment:
         neighbors = self.maze.get_neighbors(self.agent,self.maze.is_open)
         for n in list(neighbors):
                 p = self.get_probability(n)
+                self.neighbor_prob[n]=p
                 if p > best[0]:
                     best = (p, n)
         return best
 
     def get_probability(self, start: (int, int)):
         success = 0
-        for i in range(5):
+        times=5
+        for i in range(times):
             sim = copy.deepcopy(self)
             sim.strategy = constants.STRATEGY_1
             sim.agent = start
@@ -187,7 +193,7 @@ class experiment:
             sim.advance_fire()
             if sim.run():
                 success += 1
-        return (success / 5)
+        return (success / times)
 
 
     def Sims(self):
@@ -226,11 +232,12 @@ class experiment:
                 highest_sr_index = i
         return forks[highest_sr_index].maze.Astar(forks[highest_sr_index].start, self.end)
 
+'''
 test_dim = 25
-for i in range(3):
+for i in range(5):
     exp = experiment(test_dim, .2, .3, (0, 0), (test_dim-1, test_dim-1), 4)
     print(exp.man_run())
-
+'''
 
 
 #exp = experiment(5,.2,.2,(0,0),(4,4),3)
