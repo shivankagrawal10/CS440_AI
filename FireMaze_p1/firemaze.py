@@ -161,7 +161,7 @@ class maze:
                             break
         return ([], constants.NO_PATH)
     
-    def CTF(self, start : (int, int), end : (int, int)):
+    def CTF(self, start : (int, int), end : (int, int)): #Countdown to Freedom
         real_grid = self.grid
         real_q = self.q
         plan = []
@@ -220,16 +220,48 @@ class maze:
                 self.grid = real_grid
                 return ([], constants.NO_PATH)
 
-    def maze_visualize(self, agent, grid):
-            #colors={0:'white',1:'black',2:'red'}
-            cmap = mat.colors.LinearSegmentedColormap.from_list("", ["skyblue","gray","red","white"])
-            plt.imshow(grid,cmap)
-            plt.draw()
-            if(agent == self.end):
-                    plt.show()
+    def Marco_Polo_Prob(self, start : (int, int), end : (int, int)):
+        fringe = []
+        visited = {}
+        predecessors = {}
+        heapq.heappush(fringe, (0, (0, start, constants.UNDEFINED)))
+        while fringe:
+            _, (cost, curr, pred) = heapq.heappop(fringe)
+            if curr in visited:
+                continue
             else:
-                    plt.pause(3)
-            return
+                visited[curr] = True
+                predecessors[curr] = pred
+                if curr == end:
+                    path = self.build_path(end, predecessors)
+                    return (path, len(visited))
+                else:
+                    neighbors = self.get_neighbors(curr, self.is_open)
+                    while True:
+                        try:
+                            neighbor = next(neighbors)
+                            if neighbor not in visited:
+                                move_cost = cost + 1
+                                dist_to_fire = self.dist_to_nearest_fire(neighbor)
+                                try:
+                                    priority = (1-self.neighbor_prob[neighbor])*(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire)
+                                except: 
+                                    priority = move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
+                                heapq.heappush(fringe, (priority, (move_cost, neighbor, curr)))
+                        except StopIteration:
+                            break
+        return ([], constants.NO_PATH)
+
+    def maze_visualize(self, agent, grid,show):
+        #colors={0:'white',1:'black',2:'red'}
+        cmap = mat.colors.LinearSegmentedColormap.from_list("", ["skyblue","gray","red","white"])
+        plt.imshow(grid,cmap)
+        plt.draw()
+        if(show==1):
+            plt.show()
+        else:
+            plt.pause(.1)
+        return
 
     def nearest_fire(self, curr:(int, int)):
             return min(self.fireloc, key = lambda x: abs(x[1] - curr[1]) + abs(x[0] - curr[0]))
