@@ -38,7 +38,8 @@ class experiment:
                         return False
 
     def man_run(self):
-        self.start_fire()
+        if not self.maze.fireloc:
+                self.start_fire()
         plan = []
         #print("Start grid")
         #print(self.maze.grid)

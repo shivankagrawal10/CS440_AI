@@ -34,7 +34,7 @@ def problem2():
     plt.ylabel("Probability that S can be reached from G")
     plt.show()
 
-#generate plot of obstacle density p versus nodes explored by BFS vs A*
+#generate plot of obstacle density p versus nodes explored by BFS - A*
 def problem3():
     dim = 50
     times = 100
@@ -69,6 +69,8 @@ def problem4():
         p = .3
         q = 0
         begin = (0, 0)
+        #loop ends if algorithm takes over 60 seconds and step is <= 1
+        #step is added to dimensions if time < 60 else step is cut in half and subtracted from dimension
         while True:
             end = (dim - 1, dim - 1)
             maze = mg.maze(dim, p, q)
@@ -102,8 +104,8 @@ def problem4():
 
 #generate graph comparing success rate of strategy 1 vs strategy 2 at various q
 def problem45():
-    dim = 25
-    times = 25
+    dim = 15
+    times = 100
     q = 0
     X = []
     Y1 = []
@@ -130,12 +132,7 @@ def problem45():
         X.append(q)
         Y1.append(success_1/times)
         Y2.append(success_2/times)
-        print(q)
-        print(Y1[-1])
-        print(Y2[-1])
-        q+=.01
-    print(sum(Y1)/len(Y1))
-    print(sum(Y2)/len(Y2))
+        q+=.05
     plt.scatter(X,Y1,label = 'Strategy 1')
     plt.scatter(X,Y2, label = 'Strategy 2')
     plt.legend()
@@ -151,24 +148,29 @@ def problem_6():
     avg = [0, 0, 0, 0]
     fig, ax = plt.subplots()
     i = 0
+    #create scatter for each strategy
     for strategy, color in [(1, 'tab:blue'), (2, 'tab:orange'), (3, 'tab:green'), (4, 'tab:red')]:  #(5, 'tab:black')
         q = 0
         X = []
         Y = []
+        #test q from 0 to 1 at step of .05
         while q <= 1:
             num_success = 0
             for x in range(trials):
                 success = False
                 while True: 
-                    exp1 = mr.experiment(dim, p, q, start, end, strategy)
-                    solvable = exp1.maze.DFS(start, end)
-                    if solvable:
+                    exp = mr.experiment(dim, p, q, start, end, strategy)
+                    fire_coords = exp.start_fire()
+                    if exp.maze.Astar(start,end) == constants.NO_PATH or exp.maze.Astar(fire_coords,start)==constants.NO_PATH:
+                        continue
+                    else:
                         break
-                success = exp1.man_run()
+                success = exp.man_run()
                 if success:
                     num_success += 1
             Y.append(num_success / trials)
             X.append(q)
+            print(q)
             q += .05
         ax.scatter(X, Y, c=color, label=strategy, alpha=.5)
         print("Finished strategy", strategy)
@@ -180,6 +182,8 @@ def problem_6():
     ax.grid(True)
     plt.show()
     print(avg)
-problem45()
-#problem_6()
+
+#test()
+#problem45()
+problem_6()
 
