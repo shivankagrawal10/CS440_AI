@@ -88,42 +88,32 @@ class experiment:
                 #print("Switching")
                 best_prob , best_first_step = self.simulation()
                 plan,_ = self.maze.Marco_Polo_Prob(self.agent, self.end)
-                #plan, _ = self.maze.Astar(best_first_step, self.end)
-                
-                #print(plan)
-                
-                #if best_first_step != self.agent:
-                #        plan.insert(0, self.agent)
                 times=1
         for i in range(times):
-                #print(plan)
-                #input("Step?")
-                if self.agent == self.end: 
+            #print(plan)
+            #input("Step?")
+            if self.agent == self.end: 
+                plan = []
+                break
+            if plan:
+                curr = plan.pop(0)
+                y, x = plan[0]
+                if self.maze.grid[y][x] == constants.FIRE:
                     plan = []
                     break
-                if plan:
-                    curr = plan.pop(0)
-                    y, x = plan[0]
-                    if self.maze.grid[y][x] == constants.FIRE:
-                        plan = []
-                        break
-                    else:
-                        old_y, old_x = self.agent
-                        new_y, new_x = self.agent = plan[0]
-                        self.maze.grid[old_y][old_x] = constants.OPEN
-                        self.maze.grid[new_y][new_x] = constants.AGENT
-                    #if self.maze.grid[curr[0]][curr[1]] == constants.FIRE or (self.maze.dist_to_nearest_fire(curr)<=1 and (y,x) != self.end):
-                        #print(f'{plan}:resetting')
-                        #plan = []
                 else:
+                    old_y, old_x = self.agent
+                    new_y, new_x = self.agent = plan[0]
+                    self.maze.grid[old_y][old_x] = constants.OPEN
+                    self.maze.grid[new_y][new_x] = constants.AGENT
+            else:
+                break
+            new_grid = self.advance_fire()
+            y, x = self.agent
+            self.maze.grid = new_grid
+            if new_grid[y][x] == constants.FIRE:
+                    plan = []
                     break
-                new_grid = self.advance_fire()
-                #print(new_grid)
-                y, x = self.agent
-                self.maze.grid = new_grid
-                if new_grid[y][x] == constants.FIRE:
-                        plan = []
-                        break
                 
 
         return plan
