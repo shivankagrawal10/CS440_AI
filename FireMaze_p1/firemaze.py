@@ -228,7 +228,7 @@ class maze:
 							break
 		return ([], len(visited))
 
-	def Marco_Polo_Prob(self, start : (int, int), end : (int, int), ):
+	def Marco_Polo_Prob(self, start : (int, int), end : (int, int),neighbor_prob: {} ):
 		fringe = []
 		visited = {}
 		predecessors = {}
@@ -252,9 +252,10 @@ class maze:
 								move_cost = cost + 1
 								dist_to_fire = self.dist_to_nearest_fire(neighbor)
 								try:
-									priority = (1-self.neighbor_prob[neighbor])*(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire)
+									#priority = (1-neighbor_prob[neighbor])*(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire)
+									priority = (1-neighbor_prob[neighbor])*((self.get_fire_prob(neighbor)*self.dim)+(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire))
 								except:	
-									priority = move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
+									priority = (self.get_fire_prob(neighbor)*self.dim)+move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
 								heapq.heappush(fringe, (priority, (move_cost, neighbor, curr)))
 						except StopIteration:
 							break

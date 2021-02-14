@@ -25,18 +25,18 @@ class experiment:
                 self.start_fire()
         plan = []
         while self.agent != self.end:
-                        plan = self.advance_agent(self.strategy, plan)
-                        if not plan:
-                                        break
-                        new_grid = self.advance_fire()
-                        y, x = self.agent
-                        if new_grid[y][x] == constants.FIRE:
-                                        break
-                        self.maze.grid = new_grid
+            plan = self.advance_agent(self.strategy, plan)
+            if not plan:
+                break
+            new_grid = self.advance_fire()
+            y, x = self.agent
+            if new_grid[y][x] == constants.FIRE:
+                break
+            self.maze.grid = new_grid
         if self.agent == self.end:
-                        return True
+            return True
         else:
-                        return False
+            return False
 
     def man_run(self):
         self.start_fire()
@@ -88,7 +88,7 @@ class experiment:
             if times <= 1:
                 #print("Switching")
                 best_prob , best_first_step = self.simulation()
-                plan,_ = self.maze.Marco_Polo_Prob(self.agent, self.end)
+                plan,_ = self.maze.Marco_Polo_Prob(self.agent, self.end,self.neighbor_prob)
                 #plan, _ = self.maze.Astar(best_first_step, self.end)
                 
                 #print(plan)
@@ -123,10 +123,8 @@ class experiment:
                 y, x = self.agent
                 self.maze.grid = new_grid
                 if new_grid[y][x] == constants.FIRE:
-                        plan = []
-                        break
-                
-
+                    plan = []
+                    break
         return plan
 
 
@@ -233,12 +231,12 @@ class experiment:
                 highest_sr_index = i
         return forks[highest_sr_index].maze.Astar(forks[highest_sr_index].start, self.end)
 
-
+'''
 test_dim = 25
 for i in range(5):
     exp = experiment(test_dim, .2, .3, (0, 0), (test_dim-1, test_dim-1), 4)
     print(exp.man_run())
-
+'''
 
 
 #exp = experiment(5,.2,.2,(0,0),(4,4),3)
