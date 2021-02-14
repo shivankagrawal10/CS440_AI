@@ -8,8 +8,14 @@ import copy
 import matplotlib.pyplot as plt
 
 class experiment:
-    def __init__(self, dim : int, p : float, q : float, start : (int, int), end : (int, int), strategy):
-        self.maze = mg.maze(dim, p, q)
+    def __init__(self, dim : int, p : float, q : float, start : (int, int), end : (int, int), strategy: int, seed=-1):
+        self.seed = seed
+        if(seed>=0):
+            self.rg=random.Random(seed)
+            self.maze = mg.maze(dim, p, q,seed=self.rg.randint(0,100))
+        else:
+            self.rg=random.Random()
+            self.maze = mg.maze(dim, p, q)
         self.q = q
         self.start = start
         self.end = end
@@ -19,6 +25,7 @@ class experiment:
         self.strategy = strategy
         self.switch = False
         self.neighbor_prob={}
+        
 
     def run(self):
         if not self.maze.fireloc:
@@ -38,14 +45,15 @@ class experiment:
         else:
             return False
 
-    def man_run(self):
+    def man_run(self,animate):
         if not self.maze.fireloc:
-                self.start_fire()
+            self.start_fire()
         plan = []
         #print("Start grid")
         #print(self.maze.grid)
         while self.agent != self.end:
-            #self.maze.maze_visualize(self.agent,self.maze.grid,0)
+            if(animate):
+                self.maze.maze_visualize(self.agent,self.maze.grid,0)
             #input("Press any key to continue")
             #print(self.maze.grid)
             plan = self.generate_plan(self.strategy, plan)
@@ -53,7 +61,8 @@ class experiment:
                 break
             plan = self.execute_plan(self.strategy, plan)
         #print(self.maze.grid)
-        #self.maze.maze_visualize(self.agent,self.maze.grid,1)
+        if(animate):
+            self.maze.maze_visualize(self.agent,self.maze.grid,1)
         if self.agent == self.end:
             #print("Success")
             return True
@@ -71,9 +80,9 @@ class experiment:
         elif strategy == constants.STRATEGY_3:
             plan, _ = self.maze.Marco_Polo(self.agent, self.end)
         elif strategy == constants.STRATEGY_4:
-            plan, _ =  self.maze.Marco_Polo(self.agent, self.end)
+            plan, _ =  self.maze.Marco_Polo_Prob(self.agent, self.end)
         elif strategy == constants.STRATEGY_5:
-            plan, _ = self.maze.CTF(self.agent, self.end)
+            plan, _ = self.maze.Marco_Polo_Prob(self.agent, self.end)
         return plan
 
     def execute_plan(self, strategy, plan):
@@ -85,12 +94,16 @@ class experiment:
         elif strategy == constants.STRATEGY_3:
             times = self.maze.dist_to_nearest_fire(plan[0])
         elif strategy == constants.STRATEGY_4:
+            times = self.maze.dist_to_nearest_fire(plan[0])
+        '''
+        elif strategy == constants.STRATEGY_5:
             times = int((self.maze.dist_to_nearest_fire(plan[0]))/2)
             if times <= 1:
                 #print("Switching")
-                best_prob , best_first_step = self.simulation()
-                plan,_ = self.maze.Marco_Polo_Prob(self.agent, self.end)
+                #best_prob , best_first_step = self.simulation()
+                plan,_ = self.maze.Marco_Polo_Prob(self.agent, self.end,self.neighbor_prob)
                 times=1
+        '''
         for i in range(times):
             #print(plan)
             #input("Step?")
@@ -147,7 +160,7 @@ class experiment:
             for j in range(self.maze.dim):
                 if clone[i][j] != constants.FIRE and clone[i][j] != constants.BLOCKED:
                     prob = self.maze.get_fire_prob((i, j))
-                    if prob != 0 and random.random() <= prob:
+                    if prob != 0 and self.rg.random() <= prob:
                         clone[i][j] = constants.FIRE
                         self.maze.fireloc.append((i,j))
         return clone
@@ -158,7 +171,7 @@ class experiment:
             for j in range(self.maze.dim):
                 if self.maze.grid[i][j] == constants.OPEN:
                     open_cells.append((i, j))
-        y, x = random.choice(open_cells)
+        y, x = self.rg.choice(open_cells)
         self.maze.grid[y][x] = constants.FIRE
         self.maze.fireloc.append((y,x))
         return ((y,x))

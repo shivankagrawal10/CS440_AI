@@ -21,14 +21,15 @@ class maze:
 	#@param Takes in an int for the maze's dimensions (dim), a float for the obstacle density (p),
 	#and a float for the flammability rate (q).
 
-	def __init__(self, dim: int, p: float, q: float):
+	def __init__(self, dim: int, p: float, q: float,seed=-1):
 		self.dim = dim
 		self.end = (dim-1,dim-1)
 		self.p = p
 		self.q = q 
+		self.seed = seed
 		self.grid = self.make_grid(dim, p)
 		self.fireloc=[]
-
+		
 	#Helper method for creating a grid. After generating the base grid with the help of numpy's zeros method,
 	#for every cell in the grid, we generate a random number, and if the number is less than or equal to the 
 	#obstacle density, we the cell is blocked. The start cell and end cell are set to open before the grid is
@@ -37,10 +38,14 @@ class maze:
 	#@return Returns a numpy array representing the initial state of the maze.
 
 	def make_grid(self, dim: int, p: float):
+		if(self.seed != -1):
+			rg = random.Random(self.seed)
+		else:
+			rg = random.Random()
 		grid = np.zeros((dim, dim))
 		for i in range(dim):
 			for j in range(dim):
-				if random.random() <= p:
+				if rg.random() <= p:
 					grid[i][j] = constants.BLOCKED
 		grid[0][0] = constants.OPEN
 		grid[dim - 1][dim - 1] = constants.OPEN
@@ -228,7 +233,7 @@ class maze:
 							break
 		return ([], len(visited))
 
-	def Marco_Polo_Prob(self, start : (int, int), end : (int, int),neighbor_prob: {} ):
+	def Marco_Polo_Prob(self, start : (int, int), end : (int, int),neighbor_prob={} ):
 		fringe = []
 		visited = {}
 		predecessors = {}
@@ -253,7 +258,7 @@ class maze:
 								dist_to_fire = self.dist_to_nearest_fire(neighbor)
 								try:
 									#priority = (1-neighbor_prob[neighbor])*(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire)
-									priority = (1-neighbor_prob[neighbor])*((self.get_fire_prob(neighbor)*self.dim)+(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire))
+									priority = ((self.get_fire_prob(neighbor)*self.dim)+(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire))
 								except:	
 									priority = (self.get_fire_prob(neighbor)*self.dim)+move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
 								heapq.heappush(fringe, (priority, (move_cost, neighbor, curr)))
@@ -276,8 +281,8 @@ class maze:
 	#Helper method that finds and returns the fire cell nearest to a given position
 	#@param Takes an int-int tuple (curr) representing the cell for which we wish to find the nearest fire cell.
 	#@return Returns an int-int tuple representing the nearest fire cell.
-    def nearest_fire(self, curr:(int, int)):
-            return min(self.fireloc, key = lambda x: abs(x[1] - curr[1]) + abs(x[0] - curr[0]))
+	def nearest_fire(self, curr:(int, int)):
+		return min(self.fireloc, key = lambda x: abs(x[1] - curr[1]) + abs(x[0] - curr[0]))
 
 	#Helper method that finds and returns the manhattan distance from a given cell to the
 	#nearest fire celll.
