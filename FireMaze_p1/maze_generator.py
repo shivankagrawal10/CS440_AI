@@ -7,7 +7,6 @@ class maze():
         self.dim=dim
         self.p=p
         self.maze=np.zeros((dim,dim))
-        #random.seed(123)
         for i in range(dim):
             for j in range(dim):
                 if random.random() <= p:
@@ -38,8 +37,7 @@ class maze():
                 check=self.check_valid(move)
                 if(check==0):
                     if(move not in visited):
-                        stack.insert(0,move)
-                        
+                        stack.insert(0,move)                
         return 0
 
     def Astar(self,start:(int,int),end:(int,int)):
@@ -67,22 +65,16 @@ class maze():
 
     def BFS(self,start:(int,int),end:(int,int)):
         queue=[]
-        #solution=[]
         visited={}
         ancestors = {}
         queue.insert(0,start)
-        #solution.append(f'{start}')
         ancestors[start]=1
         while queue :
             curr=queue.pop(0)
             visited[curr] = 1
             if(curr==end):
-                #rem=solution[0]
-                #solution.append(f'{rem},{move}')
-                #print(f'Shortest BFS path: {solution[0]}')
                 ptr = curr
                 while not ptr  == 1:
-                    #print(ptr)
                     ptr = ancestors[ptr]
                 return len(visited)
             moves=[(curr[0]+1,curr[1]),(curr[0]-1,curr[1]),
@@ -93,12 +85,4 @@ class maze():
                     if(move not in ancestors):
                         ancestors[move]=curr
                         queue.append(move)
-                        #rem=solution[0]
-                        #solution.append(f'{rem},{move}')
-                        
-            #solution.pop(0)
-        return len(visited)    
-#first= maze(25,0.2)
-#print(first.maze)
-#print(first.BFS((0,0),(first.dim-1,first.dim-1)))
-#print(first.Astar((0,0),(first.dim-1,first.dim-1)))
+        return len(visited)

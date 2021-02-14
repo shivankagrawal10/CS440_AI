@@ -276,9 +276,8 @@ class maze:
 	#Helper method that finds and returns the fire cell nearest to a given position
 	#@param Takes an int-int tuple (curr) representing the cell for which we wish to find the nearest fire cell.
 	#@return Returns an int-int tuple representing the nearest fire cell.
-
-	def nearest_fire(self, curr:(int, int)):
-		return min(self.fireloc, key = lambda x: abs(x[1] - curr[1]) + abs(x[0] - curr[0]))
+    def nearest_fire(self, curr:(int, int)):
+            return min(self.fireloc, key = lambda x: abs(x[1] - curr[1]) + abs(x[0] - curr[0]))
 
 	#Helper method that finds and returns the manhattan distance from a given cell to the
 	#nearest fire celll.

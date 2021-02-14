@@ -39,7 +39,8 @@ class experiment:
             return False
 
     def man_run(self):
-        self.start_fire()
+        if not self.maze.fireloc:
+                self.start_fire()
         plan = []
         #print("Start grid")
         #print(self.maze.grid)
@@ -88,41 +89,31 @@ class experiment:
             if times <= 1:
                 #print("Switching")
                 best_prob , best_first_step = self.simulation()
-                plan,_ = self.maze.Marco_Polo_Prob(self.agent, self.end,self.neighbor_prob)
-                #plan, _ = self.maze.Astar(best_first_step, self.end)
-                
-                #print(plan)
-                
-                #if best_first_step != self.agent:
-                #        plan.insert(0, self.agent)
+                plan,_ = self.maze.Marco_Polo_Prob(self.agent, self.end)
                 times=1
         for i in range(times):
-                #print(plan)
-                #input("Step?")
-                if self.agent == self.end: 
+            #print(plan)
+            #input("Step?")
+            if self.agent == self.end: 
+                plan = []
+                break
+            if plan:
+                curr = plan.pop(0)
+                y, x = plan[0]
+                if self.maze.grid[y][x] == constants.FIRE:
                     plan = []
                     break
-                if plan:
-                    curr = plan.pop(0)
-                    y, x = plan[0]
-                    if self.maze.grid[y][x] == constants.FIRE:
-                        plan = []
-                        break
-                    else:
-                        old_y, old_x = self.agent
-                        new_y, new_x = self.agent = plan[0]
-                        self.maze.grid[old_y][old_x] = constants.OPEN
-                        self.maze.grid[new_y][new_x] = constants.AGENT
-                    #if self.maze.grid[curr[0]][curr[1]] == constants.FIRE or (self.maze.dist_to_nearest_fire(curr)<=1 and (y,x) != self.end):
-                        #print(f'{plan}:resetting')
-                        #plan = []
                 else:
-                    break
-                new_grid = self.advance_fire()
-                #print(new_grid)
-                y, x = self.agent
-                self.maze.grid = new_grid
-                if new_grid[y][x] == constants.FIRE:
+                    old_y, old_x = self.agent
+                    new_y, new_x = self.agent = plan[0]
+                    self.maze.grid[old_y][old_x] = constants.OPEN
+                    self.maze.grid[new_y][new_x] = constants.AGENT
+            else:
+                break
+            new_grid = self.advance_fire()
+            y, x = self.agent
+            self.maze.grid = new_grid
+            if new_grid[y][x] == constants.FIRE:
                     plan = []
                     break
         return plan
@@ -134,7 +125,8 @@ class experiment:
         elif strategy == constants.STRATEGY_2:
             plan, _ = self.maze.Astar(self.agent, self.end)
         elif strategy == constants.STRATEGY_3:
-            plan, _ = self.maze.ADAAC(self.agent, self.end)
+            plan, _ = self.maze.Marco_Polo(self.agent,self.end)
+            #plan, _ = self.maze.ADAAC(self.agent, self.end)
         elif strategy == constants.STRATEGY_4:
             plan, _ = self.maze.Marco_Polo(self.agent,self.end)
         if plan:
@@ -183,12 +175,11 @@ class experiment:
 
     def get_probability(self, start: (int, int)):
         success = 0
-        times=5
+        times=15
         for i in range(times):
-            sim = copy.deepcopy(self)
-            sim.strategy = constants.STRATEGY_1
-            sim.agent = start
-            sim.maze.grid[start[0]][start[1]] = constants.AGENT
+            sim = experiment(self.maze.dim,self.maze.p,self.q,
+                             start,self.end,constants.STRATEGY_3)
+            sim.maze.grid = self.maze.grid
             sim.advance_fire()
             if sim.run():
                 success += 1
@@ -230,14 +221,3 @@ class experiment:
                 highest_sr = sr
                 highest_sr_index = i
         return forks[highest_sr_index].maze.Astar(forks[highest_sr_index].start, self.end)
-
-'''
-test_dim = 25
-for i in range(5):
-    exp = experiment(test_dim, .2, .3, (0, 0), (test_dim-1, test_dim-1), 4)
-    print(exp.man_run())
-'''
-
-
-#exp = experiment(5,.2,.2,(0,0),(4,4),3)
-#print(exp.simulation())
