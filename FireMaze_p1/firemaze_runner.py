@@ -6,6 +6,7 @@ import firemaze as mg
 import constants
 import copy
 import matplotlib.pyplot as plt
+
 class experiment:
     def __init__(self, dim : int, p : float, q : float, start : (int, int), end : (int, int), strategy):
         self.maze = mg.maze(dim, p, q)
@@ -232,12 +233,12 @@ class experiment:
                 highest_sr_index = i
         return forks[highest_sr_index].maze.Astar(forks[highest_sr_index].start, self.end)
 
-'''
+
 test_dim = 25
 for i in range(5):
     exp = experiment(test_dim, .2, .3, (0, 0), (test_dim-1, test_dim-1), 4)
     print(exp.man_run())
-'''
+
 
 
 #exp = experiment(5,.2,.2,(0,0),(4,4),3)
