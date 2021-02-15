@@ -90,7 +90,7 @@ class experiment:
         elif strategy == constants.STRATEGY_3:
             plan, _ = self.maze.Marco_Polo(self.agent, self.end)
         elif strategy == constants.STRATEGY_4:
-            plan, _ =  self.maze.Marco_Polo(self.agent, self.end)
+            plan, _ =  self.maze.Marco_Polo_Prob(self.agent, self.end)
         elif strategy == constants.STRATEGY_5:
             plan, _ = self.maze.Marco_Polo_Prob(self.agent, self.end)
         return plan
@@ -107,10 +107,10 @@ class experiment:
             times = max(int((self.maze.dist_to_nearest_fire(plan[0]))/2),1)
         elif strategy == constants.STRATEGY_4:
             times = int((self.maze.dist_to_nearest_fire(plan[0]))/2)
-            if times < 1:
+            if times <= 1:
                 #print("Switching")
                 #self.maze.maze_visualize(self.agent,self.maze.grid,0)
-                best_prob , best_first_step = self.simulation()
+                #best_prob , best_first_step = self.simulation()
                 #self.maze.maze_visualize(self.agent,self.maze.grid,0)
                 plan,_ = self.maze.Marco_Polo_Prob(self.agent, self.end,self.neighbor_prob)
                 self.neighbor_prob={}
@@ -144,6 +144,7 @@ class experiment:
             new_grid = self.advance_fire()
             y, x = self.agent
             self.maze.grid = new_grid
+            #self.maze.maze_visualize(self.agent,self.maze.grid,2)
             if new_grid[y][x] == constants.FIRE:
                     plan = []
                     break
@@ -206,10 +207,10 @@ class experiment:
 
     def get_probability(self, start: (int, int)):
         success = 0
-        times=5
+        times=10
         for i in range(times):
             sim = experiment(self.maze.dim,self.maze.p,self.q,
-                             start,self.end,constants.STRATEGY_3)
+                            start,self.end,constants.STRATEGY_3)
             sim.maze.grid = self.maze.clone_grid()
             sim.maze.fireloc = copy.deepcopy(self.maze.fireloc)
             sim.agent = start
@@ -259,7 +260,7 @@ class experiment:
 dim=15
 random.seed(dim)
 for i in range(3):   
-    exp = experiment(dim, .2 , .2, (0, 0), (dim-1, dim-1), 4,seed=random.randint(0,10))
+    exp = experiment(dim, .2 , .2, (0, 0), (dim-1, dim-1), 1,seed=random.randint(0,10))
     if i==2:
         exp.man_run(1)
 '''

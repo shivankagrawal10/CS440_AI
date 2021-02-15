@@ -140,17 +140,17 @@ def problem45():
 
 #generate success rate of strategies for various q at p = .3
 def problem_6():
-    dim = 15
+    dim = 25
     p = .3
     seed = random.randint(0,100)
     trials = 10
     start = (0, 0)
     end = (dim - 1, dim - 1)
-    avg = [0, 0, 0, 0, 0]
+    avg = [0, 0, 0, 0]
     fig, ax = plt.subplots()
     i = 0
     #create scatter for each strategy
-    for strategy, color in [(1, 'tab:blue'), (2, 'tab:orange'), (3, 'tab:green'), (4, 'tab:red'),  (5, 'tab:gray')]:
+    for strategy, color in [(1, 'tab:blue'), (2, 'tab:orange'), (4, 'tab:green')]:#, (4, 'tab:red')]:#,  (5, 'tab:gray')]:
         rg=random.Random(seed)
         #random.seed(seed)
         q = 0
@@ -171,10 +171,10 @@ def problem_6():
                         break
                 success = exp.man_run(0)
                 '''
-                if(q==0.5 and (x == 2 or x==1)):
-                    success = exp.man_run(1)
+                if(q<=0.5 and x==1):
+                    success = exp.man_run(2)
                 else:
-                    exp.man_run(0)
+                    success = exp.man_run(0)
                 '''    
                 if success:
                     num_success += 1
@@ -183,7 +183,7 @@ def problem_6():
             Y.append(num_success / trials)
             X.append(q)
             print(q)
-            q += .1
+            q += 0.05
         ax.scatter(X, Y, c=color, label=strategy, alpha=.5)
         print("Finished strategy", strategy)
         avg[i] = sum(Y) / 20
