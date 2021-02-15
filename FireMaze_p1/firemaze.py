@@ -260,7 +260,8 @@ class maze:
 									priority = (1-neighbor_prob[neighbor])*(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire)
 									#priority = ((self.get_fire_prob(neighbor)*self.dim)+(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire))
 								except:	
-									priority = (self.get_fire_prob(neighbor)*self.dim)+move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
+									#priority = (self.get_fire_prob(neighbor)*self.dim)+move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
+									priority = move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
 								heapq.heappush(fringe, (priority, (move_cost, neighbor, curr)))
 						except StopIteration:
 							break
@@ -273,11 +274,14 @@ class maze:
 		cmap = mat.colors.LinearSegmentedColormap.from_list("", ["skyblue","gray","red","white"])
 		plt.imshow(grid,cmap)
 		plt.draw()
-		if(show==1):
-			plt.show()
-		else:
+		if(show==0):
 			plt.pause(.5)
-
+		elif(show==1):
+			plt.pause(3)
+		elif(show==2):
+			plt.pause(0.001)
+		elif(show==3):
+			plt.pause(.01)
 	#Helper method that finds and returns the fire cell nearest to a given position
 	#@param Takes an int-int tuple (curr) representing the cell for which we wish to find the nearest fire cell.
 	#@return Returns an int-int tuple representing the nearest fire cell.
