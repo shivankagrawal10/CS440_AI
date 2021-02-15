@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import timeit
 import numpy as np
 import constants
-
+import random
 #generate and print maze
 #size dim, obstacle probability p, and fire spread q
 def problem1(dim, p, q):
@@ -144,14 +144,17 @@ def problem45():
 def problem_6():
     dim = 15
     p = .3
-    trials = 1000
+    seed = random.randint(0,100)
+    trials = 100
     start = (0, 0)
     end = (dim - 1, dim - 1)
-    avg = [0, 0, 0, 0]
+    avg = [0, 0, 0, 0, 0]
     fig, ax = plt.subplots()
     i = 0
     #create scatter for each strategy
-    for strategy, color in [(3, 'tab:blue')]:#, (2, 'tab:orange'), (3, 'tab:green'), (4, 'tab:red')]:  #(5, 'tab:black')
+    for strategy, color in [(4, 'tab:blue')]:#, (2, 'tab:orange'), (3, 'tab:green'), (4, 'tab:red'),  (5, 'tab:gray')]:
+        rg=random.Random(seed)
+        #random.seed(seed)
         q = 0
         X = []
         Y = []
@@ -161,15 +164,25 @@ def problem_6():
             for x in range(trials):
                 success = False
                 while True: 
-                    exp = mr.experiment(dim, p, q, start, end, strategy)
+                    exp = mr.experiment(dim, p, q, start, end, strategy,seed=rg.randint(0,100))
                     fire_coords = exp.start_fire()
                     if exp.maze.Astar(start,end) == constants.NO_PATH or exp.maze.Astar(fire_coords,start)==constants.NO_PATH:
                         continue
                     else:
                         break
-                success = exp.man_run()
+                #if(q==0.3 and (x == 2 or x==1)):
+                #        exp.maze.maze_visualize(exp.agent,exp.maze.grid,1)
+                success = exp.man_run(0)
+                '''
+                if(q==0.3 and (x == 2 or x==1)):
+                    success = exp.man_run(1)
+                else:
+                    exp.man_run(0)
+                    '''
                 if success:
                     num_success += 1
+                #if(q==0.3 and (x == 1 or x== 2)):
+                #        exp.maze.maze_visualize(exp.agent,exp.maze.grid,1)
             Y.append(num_success / trials)
             X.append(q)
             print(q)
