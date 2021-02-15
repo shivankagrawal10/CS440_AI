@@ -279,9 +279,10 @@ class maze:
 		elif(show==1):
 			plt.pause(3)
 		elif(show==2):
-			plt.pause(0.001)
+			plt.pause(0.1)
+			plt.close()
 		elif(show==3):
-			plt.pause(.01)
+			plt.pause(.3)
 	#Helper method that finds and returns the fire cell nearest to a given position
 	#@param Takes an int-int tuple (curr) representing the cell for which we wish to find the nearest fire cell.
 	#@return Returns an int-int tuple representing the nearest fire cell.

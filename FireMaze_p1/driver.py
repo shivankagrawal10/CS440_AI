@@ -105,7 +105,7 @@ def problem4():
 #generate graph comparing success rate of strategy 1 vs strategy 2 at various q
 def problem45():
     dim = 15
-    times = 100
+    times = 10
     q = 0
     X = []
     Y1 = []
@@ -117,17 +117,17 @@ def problem45():
         while x < times:
             exp1 = mr.experiment(dim, .3,q, (0, 0), (dim-1, dim-1), 1)
             fire_coords = exp1.start_fire()
-            if exp1.maze.Astar((0,0),(dim-1,dim-1)) == constants.NO_PATH or exp1.maze.Astar(fire_coords,(0,0))==constants.NO_PATH:
+            if exp1.maze.Astar((0,0),(dim-1,dim-1)) == [] or exp1.maze.Astar(fire_coords,(0,0))==[]:
                 continue
-            success_1+=exp1.man_run()
+            success_1+=exp1.man_run(1)
             x+=1
         x = 0
         while x < times:
             exp2 = mr.experiment(dim, .3,q, (0, 0), (dim-1, dim-1), 2)
             fire_coords = exp2.start_fire()
-            if exp2.maze.Astar((0,0),(dim-1,dim-1)) == constants.NO_PATH or exp2.maze.Astar(fire_coords,(0,0))==constants.NO_PATH:
+            if exp2.maze.Astar((0,0),(dim-1,dim-1)) == [] or exp2.maze.Astar(fire_coords,(0,0))==[]:
                 continue
-            success_2+=exp2.man_run()
+            success_2+=exp2.man_run(1)
             x+=1
         X.append(q)
         Y1.append(success_1/times)
@@ -164,12 +164,12 @@ def problem_6():
                 while True: 
                     exp = mr.experiment(dim, p, q, start, end, strategy,seed=rg.randint(0,100))
                     fire_coords = exp.start_fire()
-                    if exp.maze.Astar(start,end) == constants.NO_PATH or exp.maze.Astar(fire_coords,start)==constants.NO_PATH:
+                    if exp.maze.Astar(start,end) == [] or exp.maze.Astar(fire_coords,start)==[]ß:
                         continue
                     else:
                         break
-                #if(q==0.3 and (x == 2 or x==1)):
-                #        exp.maze.maze_visualize(exp.agent,exp.maze.grid,1)
+                if(q==0.3 and (x==1)):
+                        exp.maze.maze_visualize(exp.agent,exp.maze.grid,1)
                 success = exp.man_run(0)
                 '''
                 if(q==0.3 and (x == 2 or x==1)):
@@ -184,7 +184,7 @@ def problem_6():
             Y.append(num_success / trials)
             X.append(q)
             print(q)
-            q += .05
+            q += .1
         ax.scatter(X, Y, c=color, label=strategy, alpha=.5)
         print("Finished strategy", strategy)
         avg[i] = sum(Y) / 20
@@ -197,6 +197,6 @@ def problem_6():
     print(avg)
 
 #test()
-#problem45()
-problem_6()
+problem45()
+#problem_6()
 

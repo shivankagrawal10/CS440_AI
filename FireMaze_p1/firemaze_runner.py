@@ -211,10 +211,10 @@ class experiment:
             sim = experiment(self.maze.dim,self.maze.p,self.q,
                              start,self.end,constants.STRATEGY_3)
             sim.maze.grid = self.maze.clone_grid()
-            sim.maze.fireloc = self.maze.fireloc
+            sim.maze.fireloc = copy.deepcopy(self.maze.fireloc)
             sim.agent = start
             sim.advance_fire()
-            if sim.man_run(2):
+            if sim.man_run(0):
                 success += 1
         return float(success / times)
 
@@ -255,9 +255,11 @@ class experiment:
                 highest_sr_index = i
         return forks[highest_sr_index].maze.Astar(forks[highest_sr_index].start, self.end)
 
+'''
 dim=15
 random.seed(dim)
 for i in range(3):   
     exp = experiment(dim, .2 , .2, (0, 0), (dim-1, dim-1), 4,seed=random.randint(0,10))
     if i==2:
         exp.man_run(1)
+'''
