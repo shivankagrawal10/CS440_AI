@@ -257,8 +257,8 @@ class maze:
 								move_cost = cost + 1
 								dist_to_fire = self.dist_to_nearest_fire(neighbor)
 								try:
-									#priority = (1-neighbor_prob[neighbor])*(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire)
-									priority = ((self.get_fire_prob(neighbor)*self.dim)+(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire))
+									priority = (1-neighbor_prob[neighbor])*(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire)
+									#priority = ((self.get_fire_prob(neighbor)*self.dim)+(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire))
 								except:	
 									priority = (self.get_fire_prob(neighbor)*self.dim)+move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
 								heapq.heappush(fringe, (priority, (move_cost, neighbor, curr)))
@@ -276,7 +276,7 @@ class maze:
 		if(show==1):
 			plt.show()
 		else:
-			plt.pause(.1)
+			plt.pause(.5)
 
 	#Helper method that finds and returns the fire cell nearest to a given position
 	#@param Takes an int-int tuple (curr) representing the cell for which we wish to find the nearest fire cell.
