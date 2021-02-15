@@ -104,8 +104,8 @@ def problem4():
 
 #generate graph comparing success rate of strategy 1 vs strategy 2 at various q
 def problem45():
-    dim = 15
-    times = 100
+    dim = 10
+    times = 1000
     q = 0
     X = []
     Y1 = []
@@ -133,6 +133,8 @@ def problem45():
         Y1.append(success_1/times)
         Y2.append(success_2/times)
         q+=.05
+    print(sum(Y1)/len(Y1))
+    print(sum(Y2)/len(Y2))
     plt.scatter(X,Y1,label = 'Strategy 1')
     plt.scatter(X,Y2, label = 'Strategy 2')
     plt.legend()
@@ -142,14 +144,14 @@ def problem45():
 def problem_6():
     dim = 15
     p = .3
-    trials = 10
+    trials = 1000
     start = (0, 0)
     end = (dim - 1, dim - 1)
     avg = [0, 0, 0, 0]
     fig, ax = plt.subplots()
     i = 0
     #create scatter for each strategy
-    for strategy, color in [(1, 'tab:blue'), (2, 'tab:orange'), (3, 'tab:green'), (4, 'tab:red')]:  #(5, 'tab:black')
+    for strategy, color in [(3, 'tab:blue')]:#, (2, 'tab:orange'), (3, 'tab:green'), (4, 'tab:red')]:  #(5, 'tab:black')
         q = 0
         X = []
         Y = []
@@ -183,7 +185,17 @@ def problem_6():
     plt.show()
     print(avg)
 
-#test()
+def test():
+    start = timeit.default_timer()
+    exp = mr.experiment(20,.3,0.1,(0,0),(19,19),3)
+    exp.start_fire()
+    exp.maze.Marco_Polo((0,0),(19,19))
+    stop = timeit.default_timer()
+    return(stop-start)
+for i in range(1000):
+    t = test()
+    if t > .01:
+        print(t)
 #problem45()
 problem_6()
 

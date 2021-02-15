@@ -6,6 +6,7 @@ import firemaze as mg
 import constants
 import copy
 import matplotlib.pyplot as plt
+import timeit
 
 class experiment:
     def __init__(self, dim : int, p : float, q : float, start : (int, int), end : (int, int), strategy):
@@ -78,19 +79,23 @@ class experiment:
 
     def execute_plan(self, strategy, plan):
         times = 0
+        switch = False
         if strategy == constants.STRATEGY_1:
             times = len(plan) - 1
         elif strategy == constants.STRATEGY_2 or strategy == constants.STRATEGY_5:
             times = 1
         elif strategy == constants.STRATEGY_3:
-            times = self.maze.dist_to_nearest_fire(plan[0])
+            times = self.maze.dist_to_nearest_fire(plan[0])//2
+            if times == 0:
+                times = 1
         elif strategy == constants.STRATEGY_4:
-            times = int((self.maze.dist_to_nearest_fire(plan[0]))/2)
+            if not switch:
+                times = (self.maze.dist_to_nearest_fire(plan[0]))-1
             if times <= 1:
-                #print("Switching")
+                switch = True
                 best_prob , best_first_step = self.simulation()
-                plan,_ = self.maze.Marco_Polo_Prob(self.agent, self.end)
-                times=1
+                plan,_ = self.maze.Marco_Polo_Prob(self.agent, self.end,self.neighbor_prob)
+                times=5
         for i in range(times):
             #print(plan)
             #input("Step?")
@@ -165,59 +170,27 @@ class experiment:
 
     def simulation(self):
         best = (0, self.agent)
-        neighbors = self.maze.get_neighbors(self.agent,self.maze.is_open)
-        for n in list(neighbors):
+        neighbors = list(self.maze.get_neighbors(self.agent,self.maze.is_open))
+        if len(neighbors) == 1:
+            return (0,neighbors[0])
+        for n in neighbors:
                 p = self.get_probability(n)
                 self.neighbor_prob[n]=p
                 if p > best[0]:
                     best = (p, n)
+                    if best[0] >= .95:
+                        return best
         return best
 
     def get_probability(self, start: (int, int)):
         success = 0
-        times=15
+        times=20
         for i in range(times):
             sim = experiment(self.maze.dim,self.maze.p,self.q,
                              start,self.end,constants.STRATEGY_3)
             sim.maze.grid = self.maze.grid
+            sim.maze.fireloc = self.maze.fireloc
             sim.advance_fire()
             if sim.run():
                 success += 1
         return (success / times)
-
-
-    def Sims(self):
-        neighbors = self.maze.get_neighbors(self.agent, self.maze.is_open)
-        forks = []
-        i = 0
-        while True:
-            try:
-                neighbor = next(neighbors)
-                forks.append(experiment(self.maze.dim, self.maze.p, self.q, self.agent, self.end, constants.STRATEGY_2))
-                forks[i].maze.grid = self.maze.clone_grid()
-                old_y, old_x = forks[i].agent
-                new_y, new_x = neighbor
-                forks[i].maze.grid[old_y][old_x] = constants.OPEN
-                forks[i].maze.grid[new_y][new_x] = constants.AGENT
-                forks[i].agent = neighbor
-                forks[i].start = neighbor
-                forks[i].maze.fireloc = self.maze.fireloc #THIS WILL NEED TO CHANGE IF STRAT 3
-                forks[i].switch = True
-                i = i + 1
-            except StopIteration:
-                break
-        success_rates = [0, 0, 0, 0]
-        for i, fork in enumerate(forks):
-            maze_start_state = fork.maze.clone_grid()
-            agent_start_state = fork.agent
-            for j in range(21):
-                success_rates[i] += fork.man_run()
-                fork.maze.grid = maze_start_state.clone_grid()
-                fork.agent = agent_start_state
-        highest_sr = 0
-        highest_sr_index = 0
-        for i, sr in enumerate(success_rates):
-            if sr >= highest_sr:
-                highest_sr = sr
-                highest_sr_index = i
-        return forks[highest_sr_index].maze.Astar(forks[highest_sr_index].start, self.end)
