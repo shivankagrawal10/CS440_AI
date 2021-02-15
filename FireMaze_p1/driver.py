@@ -164,23 +164,22 @@ def problem_6():
                 while True: 
                     exp = mr.experiment(dim, p, q, start, end, strategy,seed=rg.randint(0,100))
                     fire_coords = exp.start_fire()
-                    if exp.maze.Astar(start,end) == [] or exp.maze.Astar(fire_coords,start)==[]ß:
+                    #exp.maze.maze_visualize(exp.agent,exp.maze.grid,2)
+                    if exp.maze.Astar(start,end)[0] == [] or exp.maze.Astar(fire_coords,start)[0]==[]:
                         continue
                     else:
                         break
-                if(q==0.3 and (x==1)):
-                        exp.maze.maze_visualize(exp.agent,exp.maze.grid,1)
                 success = exp.man_run(0)
                 '''
-                if(q==0.3 and (x == 2 or x==1)):
+                if(q==0.5 and (x == 2 or x==1)):
                     success = exp.man_run(1)
                 else:
                     exp.man_run(0)
-                    '''
+                '''    
                 if success:
                     num_success += 1
-                #if(q==0.3 and (x == 1 or x== 2)):
-                #        exp.maze.maze_visualize(exp.agent,exp.maze.grid,1)
+                #if(q==0.5 and (x == 1 or x== 2)):
+                #        exp.maze.maze_visualize(exp.agent,exp.maze.grid,2)
             Y.append(num_success / trials)
             X.append(q)
             print(q)
@@ -197,6 +196,6 @@ def problem_6():
     print(avg)
 
 #test()
-problem45()
-#problem_6()
+#problem45()
+problem_6()
 
