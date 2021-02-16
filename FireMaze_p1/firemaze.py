@@ -260,7 +260,7 @@ class maze:
 									priority = (1-neighbor_prob[neighbor])*(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire)
 									#priority = ((self.get_fire_prob(neighbor)*self.dim)+(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire))
 								except:	
-									priority = (self.get_fire_prob(neighbor)*self.dim)+move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
+									priority = (self.get_fire_prob(neighbor)+1)*(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire)
 									#priority = move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
 								heapq.heappush(fringe, (priority, (move_cost, neighbor, curr)))
 						except StopIteration:

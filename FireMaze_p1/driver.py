@@ -119,7 +119,7 @@ def problem45():
             fire_coords = exp1.start_fire()
             if exp1.maze.Astar((0,0),(dim-1,dim-1)) == [] or exp1.maze.Astar(fire_coords,(0,0))==[]:
                 continue
-            success_1+=exp1.man_run(1)
+            success_1+=exp1.run(1)
             x+=1
         x = 0
         while x < times:
@@ -127,7 +127,7 @@ def problem45():
             fire_coords = exp2.start_fire()
             if exp2.maze.Astar((0,0),(dim-1,dim-1)) == [] or exp2.maze.Astar(fire_coords,(0,0))==[]:
                 continue
-            success_2+=exp2.man_run(1)
+            success_2+=exp2.run(1)
             x+=1
         X.append(q)
         Y1.append(success_1/times)
@@ -142,15 +142,16 @@ def problem45():
 def problem_6():
     dim = 25
     p = .3
+    qincr= 0.05
     seed = random.randint(0,100)
     trials = 10
     start = (0, 0)
     end = (dim - 1, dim - 1)
-    avg = [0, 0, 0, 0]
+    avg = [0, 0, 0, 0, 0]
     fig, ax = plt.subplots()
     i = 0
     #create scatter for each strategy
-    for strategy, color in [(1, 'tab:blue'), (2, 'tab:orange'), (4, 'tab:green')]:#, (4, 'tab:red')]:#,  (5, 'tab:gray')]:
+    for strategy, color in [(1, 'tab:blue'), (2, 'tab:orange'), (3, 'tab:green'), (4, 'tab:red')]:#,  (5, 'tab:gray')]:
         rg=random.Random(seed)
         #random.seed(seed)
         q = 0
@@ -169,12 +170,12 @@ def problem_6():
                         continue
                     else:
                         break
-                success = exp.man_run(0)
+                success = exp.run(0)
                 '''
                 if(q<=0.5 and x==1):
-                    success = exp.man_run(2)
+                    success = exp.run(2)
                 else:
-                    success = exp.man_run(0)
+                    success = exp.run(0)
                 '''    
                 if success:
                     num_success += 1
@@ -183,10 +184,10 @@ def problem_6():
             Y.append(num_success / trials)
             X.append(q)
             print(q)
-            q += 0.05
+            q += qincr
         ax.scatter(X, Y, c=color, label=strategy, alpha=.5)
         print("Finished strategy", strategy)
-        avg[i] = sum(Y) / 20
+        avg[i] = sum(Y) / (100/(qincr*100))
         i += 1
     plt.xlabel('Flammability Quotient ')
     plt.ylabel('Average Strategy Success Rate')
