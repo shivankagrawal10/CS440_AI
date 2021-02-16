@@ -106,7 +106,7 @@ class experiment:
         elif strategy == constants.STRATEGY_2 or strategy == constants.STRATEGY_5:
             times = 1
         elif strategy == constants.STRATEGY_3:
-            times = max(int((self.maze.dist_to_nearest_fire(plan[0]))/2),1)
+            times = max((self.maze.dist_to_nearest_fire(plan[0])//2),1)
         elif strategy == constants.STRATEGY_4:
             times = int((self.maze.dist_to_nearest_fire(plan[0]))/2)
             if times < 1:
@@ -204,11 +204,13 @@ class experiment:
             self.neighbor_prob[n]=p
             if p > best[0]:
                 best = (p, n)
+                if best[0] >= .9:
+                    return best
         return best
 
     def get_probability(self, start: (int, int)):
         success = 0
-        times=5
+        times=20
         for i in range(times):
             sim = experiment(self.maze.dim,self.maze.p,self.q,
                              start,self.end,constants.STRATEGY_3)
