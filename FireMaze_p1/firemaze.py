@@ -179,30 +179,11 @@ class maze:
 							break
 		return ([], len(visited))
 
-	#Marco_Polo_Prob is an implementation of our own custom search algorithm.
+	
+        #Marco_Polo_Prob is an implementation of our own custom search algorithm.
 	#Our algorithm uses the following heuristic:
-	#Let the priority of a cell be equal to the product of 1 less the probability that a path from this cell
-	#to the end cell can be successfully traversed and the sum of the number of steps taken to reach this cell and
-	#the euculidean distance from this cell to the end cell less the distance from this cell to the nearest fire cell.
-	#The algorithm runs as follows:
-		#Load the starting cell into the fringe with priority 0, a cost of 0 to reach it, and an undefined predecessor.
-		#While the fringe is not empty, do the following:
-			#Remove the cell with the smallest priority from the fringe.
-			#If this cell has been visited, go to the next iteration.
-			#Otherwise do the following:
-				#Mark this cell as visited and record the its predecessor.
-				#If this cell is the one to which we're seeking a path, return a tuple storing the path to this cell
-				#and the number of cells visited during the search.
-				#Otherwise, do the follwing:
-					#Get the four (cardinal direction) neighbors of this cell.
-					#For each of these neighbors, if they haven't been visited, calculate the priority of the neighbor and add a tuple
-					#to the fringe storing that neighbor's priority, and another tuple storing the number of steps taken to reach the neighbor,
-					#the neighbor, and the neighbor's predecessor, which is the cell most recently removed from the fringe.
-		#If the fringe empties, return a tuple storing an empty list (to indicate there is no path) and the number of cells visited during the search.
-	#@param Take in an int-int tuple (start) representing the cell the search starts from, and an int-int tuple (end) 
-	#representing the cell to which a path is sought.
-	#@return Returns a list of int-int tuples representing the cells that comprise the path and an int representing the number of cells visited.
-
+	#The priority of a cell is steps taken to get to cell + euclidean distance to goal - distance to nearest fire cell
+	#Besides the difference in heuristic the algorithm runs the same as A*
 	def Marco_Polo(self, start : (int, int), end : (int, int)):
 		fringe = []
 		visited = {}
@@ -231,7 +212,12 @@ class maze:
 						except StopIteration:
 							break
 		return ([], len(visited))
-
+	
+        #Marco_Polo_Prob is an implementation of our own custom search algorithm.
+	#Our algorithm uses the following heuristic:
+	#The priority of a cell is steps taken to get to cell + euclidean distance to goal - distance to nearest fire cell
+	#weighted by (1+probability the cell will catch on fire on next step)
+	#Besides the difference in heuristic the algorithm runs the same as A*
 	def Marco_Polo_Prob(self, start : (int, int), end : (int, int),neighbor_prob={} ):
 		fringe = []
 		visited = {}
@@ -255,12 +241,12 @@ class maze:
 							if neighbor not in visited:
 								move_cost = cost + 1
 								dist_to_fire = self.dist_to_nearest_fire(neighbor)
+								#runs if neighbor_prob has been provided by simulation as done in strategy 5 or 6
+								#except if no simulation has been run as in strategy 3
 								try:
 									priority = (1-neighbor_prob[neighbor])*(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire)
-									#priority = ((self.get_fire_prob(neighbor)*self.dim)+(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire))
 								except:	
 									priority = (self.get_fire_prob(neighbor)+1)*(move_cost + self.get_dist_to(end, neighbor) - dist_to_fire)
-									#priority = move_cost + self.get_dist_to(end, neighbor) - dist_to_fire
 								heapq.heappush(fringe, (priority, (move_cost, neighbor, curr)))
 						except StopIteration:
 							break

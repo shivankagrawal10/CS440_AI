@@ -31,7 +31,6 @@ class experiment:
         self.agent = (y, x)
         self.maze.grid[y][x] = constants.AGENT
         self.strategy = strategy
-        self.switch = False
         self.neighbor_prob={}
 
     #Starts the firemaze environment and executes the planning and travel of strategy
@@ -45,11 +44,11 @@ class experiment:
                     self.maze.maze_visualize(self.agent,self.maze.grid,3)
                 else:
                     self.maze.maze_visualize(self.agent,self.maze.grid,3)
-            #input("Press any key to continue") #optional if want to see maze for longer
             plan = self.generate_plan(self.strategy, plan)
             if not plan:
                 break
-            plan = self.execute_plan(self.strategy, plan)
+            if not self.execute_plan(self.strategy, plan):
+                break
         if(animate):
             if(animate==1):
                 self.maze.maze_visualize(self.agent,self.maze.grid,3)
@@ -64,18 +63,13 @@ class experiment:
     #if not a valid strategy or agent on fire then will return an empty plan
     #@return plan (list object)
     def generate_plan(self, strategy, plan):
-        if self.maze.grid[self.agent[0]][self.agent[1]] == constants.FIRE:
-            return []
-        if strategy == constants.STRATEGY_1 and not plan:
+        if strategy == constants.STRATEGY_1 or strategy == constants.STRATEGY_2:
             #A Star based on travel cost and euclidean distance heuristic
             plan, _ = self.maze.Astar(self.agent, self.end)
-        elif strategy == constants.STRATEGY_2:
-            #A Star based on travel cost and euclidean distance heuristic
-            plan, _ = self.maze.Astar(self.agent, self.end)
-        elif strategy == constants.STRATEGY_3:
+        elif strategy == constants.STRATEGY_4:
             #A Star based on traditional distance heuristic and distance from fire
             plan, _ = self.maze.Marco_Polo(self.agent, self.end)
-        elif strategy == constants.STRATEGY_4 or strategy == constants.STRATEGY_5:
+        elif strategy == constants.STRATEGY_3 or strategy == constants.STRATEGY_5:
             #A Star based on traditional distance heuristic, distance from fire, and probability of neighbor catching on fire
             plan, _ =  self.maze.Marco_Polo_Prob(self.agent, self.end)
         elif strategy == constants.STRATEGY_6:
@@ -94,39 +88,32 @@ class experiment:
         elif strategy == constants.STRATEGY_2 :
             times = 1
         elif strategy == constants.STRATEGY_3 or strategy == constants.STRATEGY_4:
-            times = max(int((self.maze.dist_to_nearest_fire(plan[0]))/2),1)
+            times = max(self.maze.dist_to_nearest_fire(plan[0])//2,1)
         elif strategy == constants.STRATEGY_5:
-            times = int((self.maze.dist_to_nearest_fire(plan[0]))/2)
+            times = (self.maze.dist_to_nearest_fire(plan[0])//2)
             if times <= 1:
                 best_prob , best_first_step = self.simulation()
                 plan,_ = self.maze.Marco_Polo_Prob(self.agent, self.end,self.neighbor_prob)
                 self.neighbor_prob={}
                 times= len(plan) - 1
-        
+        if times > len(plan)-1:
+                times = len(plan)-1
         for i in range(times):
-            if self.agent == self.end: 
-                plan = []
-                break
-            if plan:
-                curr = plan.pop(0)
-                y, x = plan[0]
-                if self.maze.grid[y][x] == constants.FIRE:
-                    plan = []
-                    break
-                else:
-                    old_y, old_x = self.agent
-                    new_y, new_x = self.agent = plan[0]
-                    self.maze.grid[old_y][old_x] = constants.OPEN
-                    self.maze.grid[new_y][new_x] = constants.AGENT
+            curr = plan.pop(0)
+            y, x = plan[0]
+            if self.maze.grid[y][x] == constants.FIRE:
+                return False
             else:
-                break
+                old_y, old_x = self.agent
+                new_y, new_x = self.agent = plan[0]
+                self.maze.grid[old_y][old_x] = constants.OPEN
+                self.maze.grid[new_y][new_x] = constants.AGENT
             new_grid = self.advance_fire()
             y, x = self.agent
             self.maze.grid = new_grid
             if new_grid[y][x] == constants.FIRE:
-                    plan = []
-                    break
-        return plan
+                return False
+        return True
 
     #Spreads the fire in the graph environment according to probability formula given in problem statement
     def advance_fire(self):
@@ -180,15 +167,3 @@ class experiment:
             if sim.man_run(0):
                 success += 1
         return float(success / times)
-
-
-#Debugging tests
-'''
-dim=15
-
-for i in range(3):   
-    random.seed(10*i)
-    exp = experiment(dim, .2 , .2, (0, 0), (dim-1, dim-1), 4,seed=random.randint(0,10))
-    #if i==2:
-    exp.run(1)
-'''

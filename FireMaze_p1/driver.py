@@ -92,7 +92,6 @@ def problem4():
                     step = int(step / 2)
                     dim += step
             else:
-                print("Solved dim", dim, "in", stop - start, "with", i)
                 Y[i] = dim
                 dim += step
     ypos = np.arrange(len(X))
@@ -101,45 +100,6 @@ def problem4():
     plt.xlabel('Search Method')
     plt.ylabel('Largest Dimension Solved in Under a Minute')
     plt.show()
-
-#generate graph comparing success rate of strategy 1 vs strategy 2 at various q
-def problem45():
-    dim = 15
-    times = 100
-    q = 0
-    X = []
-    Y1 = []
-    Y2 = []
-    while q <= 1:
-        success_1 = 0
-        success_2 = 0
-        x = 0
-        while x < times:
-            exp1 = mr.experiment(dim, .3,q, (0, 0), (dim-1, dim-1), 1)
-            fire_coords = exp1.start_fire()
-            if exp1.maze.Astar((0,0),(dim-1,dim-1))[0] == [] or exp1.maze.Astar(fire_coords,(0,0))[0]==[]:
-                continue
-            success_1+=exp1.run(1)
-            x+=1
-        x = 0
-        while x < times:
-            exp2 = mr.experiment(dim, .3,q, (0, 0), (dim-1, dim-1), 2)
-            fire_coords = exp2.start_fire()
-            if exp2.maze.Astar((0,0),(dim-1,dim-1))[0] == [] or exp2.maze.Astar(fire_coords,(0,0))[0]==[]:
-                continue
-            success_2+=exp2.run(1)
-            x+=1
-        print(q)
-        X.append(q)
-        Y1.append(success_1/times)
-        Y2.append(success_2/times)
-        q+=.05
-    print(sum(Y1)/len(Y1))
-    print(sum(Y2)/len(Y2))
-    plt.scatter(X,Y1,label = 'Strategy 1')
-    plt.scatter(X,Y2, label = 'Strategy 2')
-    plt.legend()
-    plt.show()  
 
 #generate success rate of strategies for various q at p = .3
 def problem_6():
@@ -150,11 +110,10 @@ def problem_6():
     trials = 50
     start = (0, 0)
     end = (dim - 1, dim - 1)
-    avg = [0, 0, 0, 0, 0]
+    avg = []
     fig, ax = plt.subplots()
-    i = 0
     #create scatter for each strategy
-    for strategy, color in [(1, 'tab:blue'), (2, 'tab:orange'), (3, 'tab:green'), (4, 'tab:red')]:#,  (5, 'tab:gray')]:
+    for strategy, color in [(1, 'tab:blue'), (2, 'tab:orange'), (3, 'tab:green')]:
         rg=random.Random(seed)
         #random.seed(seed)
         q = 0
@@ -168,28 +127,21 @@ def problem_6():
                 while True: 
                     exp = mr.experiment(dim, p, q, start, end, strategy,seed=rg.randint(0,100))
                     fire_coords = exp.start_fire()
-                    if exp.maze.Astar(start,end)[0] == [] or exp.maze.Astar(fire_coords,start)[0]==[]:
-                        continue
-                    else:
+                    if exp.maze.DFS(start,end) and exp.maze.DFS(fire_coords,start):
                         break
                 success = exp.run(0) 
                 if success:
                     num_success += 1
             Y.append(num_success / trials)
             X.append(q)
-            print(q)
             q += qincr
-        ax.scatter(X, Y, c=color, label=strategy, alpha=.5)
-        print("Finished strategy", strategy)
-        avg[i] = sum(Y) / (100/(qincr*100))
-        i += 1
+        ax.scatter(X, Y, c=color, label=strategy, alpha=1)
+        avg.append(sum(Y)/len(Y))
+    print(avg)
     plt.xlabel('Flammability Quotient ')
     plt.ylabel('Average Strategy Success Rate')
     ax.legend()
     ax.grid(True)
     plt.show()
-    print(avg)
 
-#problem45()
 problem_6()
-
