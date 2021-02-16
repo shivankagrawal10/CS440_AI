@@ -15,7 +15,7 @@ def problem1(dim, p, q):
 def problem2():
     X = []
     Y = []
-    dim = 70
+    dim = 100
     times = 100
     i = 0
     #get success for obstacle density (0,1) with .01 step
@@ -144,4 +144,4 @@ def problem_6():
     ax.grid(True)
     plt.show()
 
-problem_6()
+problem2()
