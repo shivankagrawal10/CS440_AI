@@ -180,7 +180,7 @@ class maze:
 		return ([], len(visited))
 
 	
-        #Marco_Polo_Prob is an implementation of our own custom search algorithm.
+    #Marco_Polo is an implementation of our own custom search algorithm.
 	#Our algorithm uses the following heuristic:
 	#The priority of a cell is steps taken to get to cell + euclidean distance to goal - distance to nearest fire cell
 	#Besides the difference in heuristic the algorithm runs the same as A*
@@ -213,12 +213,12 @@ class maze:
 							break
 		return ([], len(visited))
 	
-        #Marco_Polo_Prob is an implementation of our own custom search algorithm.
+    #MPOF (Marco Polo and the Oracle of Fire) is an implementation of our own custom search algorithm.
 	#Our algorithm uses the following heuristic:
 	#The priority of a cell is steps taken to get to cell + euclidean distance to goal - distance to nearest fire cell
 	#weighted by (1+probability the cell will catch on fire on next step)
 	#Besides the difference in heuristic the algorithm runs the same as A*
-	def Marco_Polo_Prob(self, start : (int, int), end : (int, int),neighbor_prob={} ):
+	def MPOF(self, start : (int, int), end : (int, int),neighbor_prob={} ):
 		fringe = []
 		visited = {}
 		predecessors = {}
