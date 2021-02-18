@@ -30,13 +30,14 @@ def problem2():
         i += 0.01
         Y.append(float(success / times))
     plt.scatter(X, Y)
+    plt.title("DFS dim = 100 trials = 100")
     plt.xlabel("Obstacle Density P") 
     plt.ylabel("Probability that S can be reached from G")
     plt.show()
 
 #generate plot of obstacle density p versus nodes explored by BFS - A*
 def problem3():
-    dim = 50
+    dim = 60
     times = 100
     p = 0
     X = []
@@ -55,6 +56,7 @@ def problem3():
         Y.append((b_sum / times) - (a_sum / times))
         p += .01
     plt.scatter(X, Y)
+    plt.title("BFS vs A* dim = 60 trials = 100")
     plt.xlabel("Obstacle Density P")
     plt.ylabel("Average Number of Nodes Explored by BFS - Average Number of Nodes Explored By A*")
     plt.show()
@@ -144,4 +146,4 @@ def problem_6():
     ax.grid(True)
     plt.show()
 
-problem2()
+problem4()

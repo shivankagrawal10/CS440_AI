@@ -38,22 +38,20 @@ class experiment:
         if not self.maze.fireloc:
             self.start_fire()
         plan = []
+        #if reached goal return True
         while self.agent != self.end:
             if(animate):
-                if(animate==1):
-                    self.maze.maze_visualize(self.agent,self.maze.grid,3)
-                else:
-                    self.maze.maze_visualize(self.agent,self.maze.grid,3)
+                self.maze.maze_visualize(self.agent,self.maze.grid,3)
+            #create path to goal based on strategy
             plan = self.generate_plan(self.strategy, plan)
+            #if there is no path return False
             if not plan:
                 break
+            #if executing the plan ran into fire return False
             if not self.execute_plan(self.strategy, plan):
                 break
         if(animate):
-            if(animate==1):
-                self.maze.maze_visualize(self.agent,self.maze.grid,3)
-            else:
-                self.maze.maze_visualize(self.agent,self.maze.grid,3)
+            self.maze.maze_visualize(self.agent,self.maze.grid,3)
         if self.agent == self.end:
             return True
         else:
@@ -83,6 +81,7 @@ class experiment:
     #modularizing the running from planning enables us to experiment with number of steps taken before searching again
     def execute_plan(self, strategy, plan):
         times = 0
+        #decide how many steps to take before recalculating path
         if strategy == constants.STRATEGY_1 or strategy == constants.STRATEGY_6:
             times = len(plan) - 1
         elif strategy == constants.STRATEGY_2 :
@@ -98,6 +97,7 @@ class experiment:
                 times= len(plan) - 1
         if times > len(plan)-1:
                 times = len(plan)-1
+        #move the agent and fire, if agent runs into fire return False
         for i in range(times):
             curr = plan.pop(0)
             y, x = plan[0]
