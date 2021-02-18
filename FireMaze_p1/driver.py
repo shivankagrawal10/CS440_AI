@@ -66,8 +66,8 @@ def problem4():
     X = ['DFS', 'BFS', 'A*']
     Y = [0, 0, 0]
     for i in range(3):
-        dim = 100
-        step = 500
+        dim = 1000
+        step = 300
         p = .3
         q = 0
         begin = (0, 0)
@@ -78,6 +78,7 @@ def problem4():
             maze = mg.maze(dim, p, q)
             start = timeit.default_timer()
             if i == 0:
+                
                 solvable = maze.DFS(begin, end)
             elif i == 1:
                 solvable, _ = maze.BFS(begin, end)
