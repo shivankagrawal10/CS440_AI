@@ -67,7 +67,7 @@ def problem4():
     Y = [0, 0, 0]
     for i in range(3):
         dim = 1000
-        step = 300
+        step = 500
         p = .3
         q = 0
         begin = (0, 0)
@@ -78,7 +78,6 @@ def problem4():
             maze = mg.maze(dim, p, q)
             start = timeit.default_timer()
             if i == 0:
-                
                 solvable = maze.DFS(begin, end)
             elif i == 1:
                 solvable, _ = maze.BFS(begin, end)
@@ -97,7 +96,8 @@ def problem4():
             else:
                 Y[i] = dim
                 dim += step
-    ypos = np.arrange(len(X))
+            print(dim)
+    ypos = np.arange(len(X))
     plt.xticks(ypos, X)
     plt.bar(ypos, Y)
     plt.xlabel('Search Method')
@@ -146,5 +146,3 @@ def problem_6():
     ax.legend()
     ax.grid(True)
     plt.show()
-
-problem4()
