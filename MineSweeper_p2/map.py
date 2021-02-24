@@ -72,6 +72,12 @@ class map:
 		realized_grid = "\n".join(realized_grid)
 		print(realized_grid)
 
+	def get_cell(self, coord: (int, int)):
+		if coord[0] >= 0 and coord[0] < self.d and coord[1] >= 0 and coord[1] < self.d:
+			return self._grid[coord[0]][coord[1]]
+		else 
+			return None
+
 my_map = map(5, [((2, 2), 1)])
 my_map.print_map()
 
