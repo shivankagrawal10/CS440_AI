@@ -55,7 +55,7 @@ class agent:
 			cell = self.map.get_cell(coord)
 			neighbors = self.map.get_neighbors(coord)
 			b = cell._clue - cell._num_mine
-			row = np.zeroes((self.map.d * self.map.d) + 1)
+			row = np.zeros((self.map.d * self.map.d) + 1)
 			row[-1] = b
 			for n in neighbors:
 				if n._status == cs.Cell_Status.COVERED:

@@ -37,9 +37,13 @@ class MS_Game:
 	def run(self):
 		self._minefield.print_minefield()
 		self._agent.play_game()
+		print(self._agent.correct_uncovers)
+		print(self._agent.incorrect_uncovers)
+		print(self._agent.correct_flags)
+		print(self._agent.incorrect_flags)
 
 
-driver = MS_Game(5, 1)
+driver = MS_Game(5, 2)
 driver.run()
 
 

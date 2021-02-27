@@ -4,7 +4,7 @@ def matrixSolver(matrix):
 	cols = len(matrix[0])
 	for pivot_row in range(rows):
 		pivot_col = pivot_row
-		while pivot_col < cols:
+		while pivot_col < cols - 1:
 			candidate_row = pivot_row
 			found_pivot = False
 			while candidate_row < rows:
@@ -80,8 +80,8 @@ def print_matrix(matrix):
 	print("\n".join(str_rows))
 
 #matrix = [
-#			[1, 2, -1, 2, 1, 2],
-#			[-1, -2, 1, 2, 3, 6],
+#		[1, 2, -1, 2, 1, 2],
+#		[-1, -2, 1, 2, 3, 6],
 #			[2, 4, -3, 2, 0, 3],
 #			[-3, -6, 2, 0, 3, 9]
 #		]
