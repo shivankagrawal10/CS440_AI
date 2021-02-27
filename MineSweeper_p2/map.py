@@ -75,7 +75,7 @@ class Map:
 	def get_cell(self, coord: (int, int)):
 		if coord[0] >= 0 and coord[0] < self.d and coord[1] >= 0 and coord[1] < self.d:
 			return self._grid[coord[0]][coord[1]]
-		else 
+		else:
 			return None
 
 

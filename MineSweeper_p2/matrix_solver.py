@@ -79,12 +79,12 @@ def print_matrix(matrix):
 		str_rows.append(" ".join(str_matrix[i]))
 	print("\n".join(str_rows))
 
-matrix = [
-			[1, 2, -1, 2, 1, 2],
-			[-1, -2, 1, 2, 3, 6],
-			[2, 4, -3, 2, 0, 3],
-			[-3, -6, 2, 0, 3, 9]
-		]
+#matrix = [
+#			[1, 2, -1, 2, 1, 2],
+#			[-1, -2, 1, 2, 3, 6],
+#			[2, 4, -3, 2, 0, 3],
+#			[-3, -6, 2, 0, 3, 9]
+#		]
 
-matrixSolver(matrix)
-print_matrix(matrix)
+#matrixSolver(matrix)
+#print_matrix(matrix)

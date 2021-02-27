@@ -67,5 +67,5 @@ class Minefield:
         print("\n".join(printable))
 
     def query(self, coord: (int, int), assertion):
-        return self.field[coord[0]][coord[1]] == assertion:
+        return self.field[coord[0]][coord[1]] == assertion
 

@@ -1,12 +1,15 @@
-import Map
+import map as mp
 import matrix_solver as ms
+import constants
+import numpy as np
+import cell_status as cs
 
 class agent:
 
-	def __init__(self, minefield, strategy, starting_hints)
+	def __init__(self, minefield, strategy, starting_hints):
 		self.minefield = minefield
 		self.strategy = strategy
-		self.map = Map.Map(minefield.dim, starting_hints)
+		self.map = mp.Map(minefield.dim, starting_hints)
 		self.knowledge_base = None
 		self.correct_uncovers = 0
 		self.incorrect_uncovers = 0
@@ -16,50 +19,49 @@ class agent:
 	def play_game(self):
 		print("Starting Map:")
 		self.map.print_map()
-    	while self.map.covered:
-    		input("Proceed")
-    		safes = set()
-    		mines = set()
-    		if self.strategy == constants.STRATEGY_1:
-    			self.strat_1(safes, mines)
-    		elif self.strategy == constants.STRATEGY_2:
-    			self.strat_2(safes, mines)
-    		if not safes and not mines:
-    			safes.append(np.random.choice(self.map.covered))
-    		print("Predicted safe cells are", safes)
-    		print("Predicted mine cells are", mines)
-    		self.process_safe_preds(safes)
-    		self.process_mine_preds(mines)
-    		print("New map:")
-    		self.map.print_map()
+		while self.map.covered:
+			input("Proceed")
+			safes = set()
+			mines = set()
+			if self.strategy == constants.STRATEGY_1:
+				self.strat_1(safes, mines)
+			elif self.strategy == constants.STRATEGY_2:
+				self.strat_2(safes, mines)
+			if not safes and not mines:
+				safes.add(self.randomchoice(self.map.covered))
+			print("Predicted safe cells are", safes)
+			print("Predicted mine cells are", mines)
+			self.process_safe_preds(safes)
+			self.process_mine_preds(mines)
+			print("New map:")
+			self.map.print_map()
 
 	def strat_1(self, safes, mines):
 		for coord in self.map.safes:
 			cell = self.map.get_cell(coord)
+			neighbors = self.map.get_neighbors(coord)
 			if cell._clue - cell._num_mine == cell._num_hidden:
-                neighbors = self.map.get_neighbors(coord)
-                for n in neighbors:
-                    if n._status == cs.Cell_Status.COVERED:
-        				mines.add(n.loc)
-            if (8 - cell._clue) - cell._num_safe == cell._num_hidden:
-                neighbors = self.map.get_neighbors(coord)
-                for n in neighbors:
-                    if n._status == cs.Cell_Status.COVERED:
-                        safes.add(n.loc)
+				for n in neighbors:
+					if n._status == cs.Cell_Status.COVERED:
+						mines.add(n.loc)
+			if (len(neighbors) - cell._clue) - cell._num_safe == cell._num_hidden:
+				for n in neighbors:
+					if n._status == cs.Cell_Status.COVERED:
+						safes.add(n.loc)
 
-    def strat_2(self, safes, mines):
-    	knowledge_base = []
-    	for coord in self.map.safes:
-    		cell = self.map.get_cell(coord)
-            neighbors = self.map.get_neighbors(coord)
-            b = cell._clue - cell._num_mine
-            row = np.zeroes((self.map.d * self.map.d) + 1)
-            row[-1] = b
-            for n in neighbors:
-            	if n._status == cs.Cell_Status.COVERED
-            		flat_index = n.loc[0] * self.map.d + n.loc[1]
-            		row[flat_index] = 1
-    		knowledge_base.append(row)
+	def strat_2(self, safes, mines):
+		knowledge_base = []
+		for coord in self.map.safes:
+			cell = self.map.get_cell(coord)
+			neighbors = self.map.get_neighbors(coord)
+			b = cell._clue - cell._num_mine
+			row = np.zeroes((self.map.d * self.map.d) + 1)
+			row[-1] = b
+			for n in neighbors:
+				if n._status == cs.Cell_Status.COVERED:
+					flat_index = n.loc[0] * self.map.d + n.loc[1]
+					row[flat_index] = 1
+			knowledge_base.append(row)
 		ms.matrixSolver(knowledge_base)
 		for row in knowledge_base:
 			max_val = 0
@@ -86,12 +88,13 @@ class agent:
 				for tup in neg_entries:
 					mines.add(tup)
 
-    def process_safe_preds(self, safes):
+	def process_safe_preds(self, safes):
 		for safe in safes:
-			cell = self.map.get_cell(coord)
+			cell = self.map.get_cell(safe)
 			is_safe = self.minefield.query(safe, constants.OPEN)
 			if is_safe:
-				cell._status == cs.Cell_Status.SAFE
+				cell._status = cs.Cell_Status.SAFE
+				cell._clue = self.minefield.gen_clue(safe)
 				self.correct_uncovers += 1
 				self.map.safes.add(safe)
 			else:
@@ -109,16 +112,16 @@ class agent:
 
 	def process_mine_preds(self, mines):
 		for mine in mines:
-			cell = self.map.get_cell(coord)
+			cell = self.map.get_cell(mine)
 			is_mine = self.minefield.query(mine, constants.BLOCKED)
 			if is_mine:
-				cell._status == cs.Cell_Status.MINE
+				cell._status = cs.Cell_Status.MINE
 				self.correct_flags += 1
-				self.map.mines.add(safe)
+				self.map.mines.add(mine)
 			else:
 				cell._status = cs.Cell_Status.SAFE
 				self.incorrect_flags += 1
-				self.map.safes.add(safe)
+				self.map.safes.add(mine)
 			self.map.covered.remove(mine)
 			neighbors = self.map.get_neighbors(mine)
 			for n in neighbors:
@@ -127,3 +130,13 @@ class agent:
 					n._num_safe += 1
 				elif cell._status == cs.Cell_Status.MINE:
 					n._num_mine += 1
+	def randomchoice(self, my_set):
+		selection = None
+		index = np.random.randint(0, high=(len(my_set)-1))
+		i = 0
+		for entry in my_set:
+			if i == index:
+				selection = entry
+				break
+			i += 1
+		return selection
