@@ -1,36 +1,36 @@
 import cell_status as cs
 import cell_rep as cp
 
-class map:
+class Map:
 
 	def __init__(self, d: int, hints: [((int, int), int)]):
 		self.d = d
 		self._grid = []
+		self.covered = set()
+		self.safes = set()
+		self.mines = set()
 		#SET UP COMPLETELY COVERED MAP
 		for i in range(d):
 			row = []
 			for j in range(d):
 				num_hidden = len(self.get_neighbor_coords((i, j)))
-				new_cell = cp.cell(cs.Cell_Status.COVERED, None, 0, 0, num_hidden)
+				new_cell = cp.cell(cs.Cell_Status.COVERED, None, 0, 0, num_hidden, (i, j))
 				row.append(new_cell)
+				self.covered.add((i, j))
 			self._grid.append(row)
 		#PROCESS HINTS
 		for hint in hints:
+			self.covered.remove(hint[0])
+			self.safes.add(hint[0])
 			i, j = hint[0]
 			clue = hint[1]
 			cell = self._grid[i][j]
 			cell.set_status(cs.Cell_Status.SAFE)
 			cell.set_clue(clue)
-
-		#UPDATE KNOWLEDGE BASE
-		for i in range(d):
-			for j in range(d):
-				cell = self._grid[i][j]
-				neighbors = self.get_neighbors((i, j))
-				for neighbor in neighbors:
-					if neighbor.get_status() is cs.Cell_Status.SAFE:
-						cell.set_num_safe(cell.get_num_safe() + 1)
-						cell.set_num_hidden(cell.get_num_hidden() - 1)
+			neighbors = self.get_neighbors((i, j))
+			for neighbor in neighbors:
+				neighbor.set_num_safe(neighbor.get_num_safe() + 1)
+				neighbor.set_num_hidden(neighbor.get_num_hidden() - 1)
 
 	def get_neighbor_coords(self, coordinate: (int, int)):
 		vectors = [(-1, -1),(-1, 0),(-1, 1),
@@ -78,6 +78,4 @@ class map:
 		else 
 			return None
 
-my_map = map(5, [((2, 2), 1)])
-my_map.print_map()
 

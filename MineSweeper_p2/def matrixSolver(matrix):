@@ -1,0 +1,11 @@
+def matrixSolver(matrix):
+	rows = len(matrix)
+	cols = len(matrix[0])
+	for i in range(rows):
+		j = i
+		while j < col
+			k = i
+			while k < rows:
+				if matrix[k][j] != 0:
+					swap(A[k])
+				k += 1

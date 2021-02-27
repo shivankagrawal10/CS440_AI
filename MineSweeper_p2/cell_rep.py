@@ -2,12 +2,13 @@ import cell_status as cs
 
 class cell:
 
-	def __init__(self, status, clue: int, num_safe: int, num_mine: int, num_hidden: int):
+	def __init__(self, status, clue: int, num_safe: int, num_mine: int, num_hidden: int, loc: (int, int)):
 		self._status = status
 		self._clue = clue
 		self._num_safe = num_safe
 		self._num_mine = num_mine
 		self._num_hidden = num_hidden
+		self.loc = loc
 
 	def get_status(self):
 		return self._status
