@@ -17,10 +17,10 @@ class agent:
 		self.incorrect_flags = 0
 
 	def play_game(self):
-		print("Starting Map:")
-		self.map.print_map()
+		#print("Starting Map:")
+		#self.map.print_map()
 		while self.map.covered:
-			input("Proceed")
+		#	input("Proceed")
 			safes = set()
 			mines = set()
 			if self.strategy == constants.STRATEGY_1:
@@ -29,12 +29,12 @@ class agent:
 				self.strat_2(safes, mines)
 			if not safes and not mines:
 				safes.add(self.randomchoice(self.map.covered))
-			print("Predicted safe cells are", safes)
-			print("Predicted mine cells are", mines)
+		#	print("Predicted safe cells are", safes)
+		#	print("Predicted mine cells are", mines)
 			self.process_safe_preds(safes)
 			self.process_mine_preds(mines)
-			print("New map:")
-			self.map.print_map()
+		#	print("New map:")
+		#	self.map.print_map()
 
 	def strat_1(self, safes, mines):
 		for coord in self.map.safes:
@@ -53,6 +53,8 @@ class agent:
 		knowledge_base = []
 		for coord in self.map.safes:
 			cell = self.map.get_cell(coord)
+			if cell._num_hidden == 0:
+				continue
 			neighbors = self.map.get_neighbors(coord)
 			b = cell._clue - cell._num_mine
 			row = np.zeros((self.map.d * self.map.d) + 1)
@@ -62,6 +64,8 @@ class agent:
 					flat_index = n.loc[0] * self.map.d + n.loc[1]
 					row[flat_index] = 1
 			knowledge_base.append(row)
+		if not knowledge_base:
+			return
 		ms.matrixSolver(knowledge_base)
 		for row in knowledge_base:
 			max_val = 0
@@ -90,6 +94,8 @@ class agent:
 
 	def process_safe_preds(self, safes):
 		for safe in safes:
+			if safe not in self.map.covered:
+				continue
 			cell = self.map.get_cell(safe)
 			is_safe = self.minefield.query(safe, constants.OPEN)
 			if is_safe:
@@ -112,6 +118,8 @@ class agent:
 
 	def process_mine_preds(self, mines):
 		for mine in mines:
+			if mine not in self.map.covered:
+				continue
 			cell = self.map.get_cell(mine)
 			is_mine = self.minefield.query(mine, constants.BLOCKED)
 			if is_mine:
@@ -130,9 +138,14 @@ class agent:
 					n._num_safe += 1
 				elif cell._status == cs.Cell_Status.MINE:
 					n._num_mine += 1
+
 	def randomchoice(self, my_set):
 		selection = None
-		index = np.random.randint(0, high=(len(my_set)-1))
+		index = None
+		if len(my_set)-1 == 0:
+			index = 0
+		else:
+			index = np.random.randint(0, high=(len(my_set)-1))
 		i = 0
 		for entry in my_set:
 			if i == index:

@@ -16,6 +16,7 @@ class Minefield:
         self.seed = seed
         #Field is array of 1s for mines and 0s for safe
         #use it to get clues for cells and check for cell type + visualization?
+        self.num_mines = 0
         self.field = self.make_field(dim, self.p)
         
     #Helper method for creating a grid. After generating the base grid with the help of numpy's zeros method,
@@ -34,6 +35,7 @@ class Minefield:
             for j in range(dim):
                 if rg.random() <= p:
                     grid[i][j] = constants.BLOCKED
+                    self.num_mines += 1
         return grid
 
     def get_neighbor_coords(self, coordinate: (int, int)):
