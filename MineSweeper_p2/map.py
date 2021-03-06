@@ -1,5 +1,9 @@
 import cell_status as cs
 import cell_rep as cp
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator
+import matplotlib as mat
 
 class Map:
 
@@ -9,6 +13,7 @@ class Map:
 		self.covered = set()
 		self.safes = set()
 		self.mines = set()
+		self.set_graph()
 		#SET UP COMPLETELY COVERED MAP
 		for i in range(d):
 			row = []
@@ -71,11 +76,65 @@ class Map:
 			realized_grid[i] = " ".join(realized_grid[i])
 		realized_grid = "\n".join(realized_grid)
 		print(realized_grid)
+		
+	def curr_map(self):
+		realized_grid = []
+		for i in range(self.d):
+			row = []
+			for j in range(self.d):
+				cell = self._grid[i][j]
+				status = cell.get_status()
+				symbol = None
+				if status == cs.Cell_Status.COVERED:
+					symbol = 0
+				elif status == cs.Cell_Status.MINE:
+					symbol = 1
+				elif status == cs.Cell_Status.SAFE:
+					symbol = 2
+				row.append(symbol)
+			realized_grid.append(row)
+		#for i in range(self.d):
+		#	realized_grid[i] = " ".join(realized_grid[i])
+		#realized_grid = "\n".join(realized_grid)
+		return realized_grid
+
+	def set_graph(self):
+		self.extent = (0, self.d, self.d, 0)
+		_, self.ax = plt.subplots()
+		self.ax.xaxis.set_major_locator(MultipleLocator(1))
+		self.ax.xaxis.tick_top()
+		self.ax.yaxis.set_major_locator(MultipleLocator(1))
+		self.ax.grid(color='black', linewidth=2,which='both')
+
+    #Helper method to generate an animation showing the movement of our agent and the fire 
+    #within a maze.
+
+	def maze_visualize(self,show):
+		cmap = mat.colors.LinearSegmentedColormap.from_list("", ["skyblue","red","white"])
+		'''
+		extent = (0, self.field.shape[1], self.field.shape[0], 0)
+		_, ax = plt.subplots()
+		ax.xaxis.set_major_locator(MultipleLocator(1))
+		ax.xaxis.tick_top()
+		ax.yaxis.set_major_locator(MultipleLocator(1))
+		'''
+		self.ax.imshow(self.curr_map(), extent=self.extent,cmap=cmap)
+		
+		#self.ax.set_frame_on(False)
+		#plt.imshow(self.field,cmap,)
+		plt.draw()
+		if(show==0):
+			plt.show()
+			#plt.pause(.5)
+		elif(show==1):
+			plt.pause(3)
+		elif(show==2):
+			plt.pause(0.1)
+		elif(show==3):
+			plt.pause(.3)
 
 	def get_cell(self, coord: (int, int)):
 		if coord[0] >= 0 and coord[0] < self.d and coord[1] >= 0 and coord[1] < self.d:
 			return self._grid[coord[0]][coord[1]]
 		else:
 			return None
-
-
