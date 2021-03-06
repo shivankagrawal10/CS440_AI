@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mat
 import cell_status as cs
 import cell_rep as cp
-
+from matplotlib.ticker import MultipleLocator
 class Minefield:
     #The minefield constructor.
     #@param Takes in an int for the maze's dimensions (dim),
@@ -18,6 +18,7 @@ class Minefield:
         #use it to get clues for cells and check for cell type + visualization?
         self.num_mines = 0
         self.field = self.make_field(dim, self.p)
+        self.set_graph()
         
     #Helper method for creating a grid. After generating the base grid with the help of numpy's zeros method,
     #for every cell in the grid, we generate a random number, and if the number is less than or equal to the 
@@ -58,6 +59,42 @@ class Minefield:
                 mine_count += 1
         return mine_count
 
+    def set_graph(self):
+        self.extent = (0, self.field.shape[1], self.field.shape[0], 0)
+        _, self.ax = plt.subplots()
+        self.ax.xaxis.set_major_locator(MultipleLocator(1))
+        self.ax.xaxis.tick_top()
+        self.ax.yaxis.set_major_locator(MultipleLocator(1))
+
+    #Helper method to generate an animation showing the movement of our agent and the fire 
+    #within a maze.
+
+    def maze_visualize(self,show):
+        cmap = mat.colors.LinearSegmentedColormap.from_list("", ["white","red"])
+        '''
+        extent = (0, self.field.shape[1], self.field.shape[0], 0)
+        _, ax = plt.subplots()
+        ax.xaxis.set_major_locator(MultipleLocator(1))
+        ax.xaxis.tick_top()
+        ax.yaxis.set_major_locator(MultipleLocator(1))
+        '''
+        self.ax.imshow(self.field, extent=self.extent,cmap=cmap)
+        self.ax.grid(color='black', linewidth=2,which='both')
+        #ax.set_frame_on(False)
+        #plt.imshow(self.field,cmap,)
+        plt.draw()
+        if(show==0):
+            plt.ion()
+            #plt.pause(.5)
+        elif(show==1):
+            plt.pause(3)
+        elif(show==2):
+            plt.pause(0.1)
+            plt.clf()
+        elif(show==3):
+            plt.pause(.3)
+            plt.clf()
+
     def print_minefield(self):
         printable = []
         for i in range(self.dim):
@@ -70,4 +107,3 @@ class Minefield:
 
     def query(self, coord: (int, int), assertion):
         return self.field[coord[0]][coord[1]] == assertion
-
