@@ -21,6 +21,7 @@ class agent:
     def play_game(self):
         #print("Starting Map:")
         #self.map.print_map()
+        self.map.maze_visualize(2)
         while self.map.covered:
             #input("Proceed")
             safes = set()
@@ -44,6 +45,7 @@ class agent:
             self.process_mine_preds(mines)
             #print("New map:")
             #self.map.print_map()
+            self.map.maze_visualize(2)
         return(self.score)
     def strat_1(self, safes, mines):
         for coord in self.map.safes:

@@ -8,6 +8,7 @@ class MS_Game:
 	def __init__(self, dim: int, strategy: int, num_hints=2, p=.3, seed=-1):
 		self._minefield = mf.Minefield(dim, p)
 		starting_hints = self.get_starting_hints(num_hints)
+		self._minefield.maze_visualize(0)
 		#print("Starting hints are", starting_hints)
 		self._agent = ag.agent(self._minefield, strategy, starting_hints)
 		self.score = 1
