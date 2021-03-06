@@ -53,8 +53,7 @@ class agent:
                 for n in neighbors:
                     if n._status == cs.Cell_Status.COVERED:
                         mines.add(n.loc)
-                        cell = self.map.get_cell(tup)
-                        cell._status = cs.Cell_Status.FLAGGED
+                        n._status = cs.Cell_Status.FLAGGED
             if (len(neighbors) - cell._clue) - cell._num_safe == cell._num_hidden:
                 for n in neighbors:
                     if n._status == cs.Cell_Status.COVERED:
@@ -154,7 +153,7 @@ class agent:
                 n._num_hidden -= 1
                 if cell._status == cs.Cell_Status.SAFE:
                     n._num_safe += 1
-                elif cell._status == cs.Cell_Status.MINE:
+                elif cell._status == cs.Cell_Status.MINE or cs.Cell_Status.FLAGGED:
                     n._num_mine += 1
 
     def randomchoice(self, my_set):
