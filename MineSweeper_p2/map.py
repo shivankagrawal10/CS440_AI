@@ -91,6 +91,8 @@ class Map:
 					symbol = 1
 				elif status == cs.Cell_Status.SAFE:
 					symbol = 2
+				elif status == cs.Cell_Status.FLAGGED:
+					symbol = 3
 				row.append(symbol)
 			realized_grid.append(row)
 		#for i in range(self.d):
@@ -110,7 +112,7 @@ class Map:
     #within a maze.
 
 	def maze_visualize(self,show):
-		cmap = mat.colors.LinearSegmentedColormap.from_list("", ["skyblue","red","white"])
+		cmap = mat.colors.LinearSegmentedColormap.from_list("", ["skyblue","red","white","orange"])
 		'''
 		extent = (0, self.field.shape[1], self.field.shape[0], 0)
 		_, ax = plt.subplots()
