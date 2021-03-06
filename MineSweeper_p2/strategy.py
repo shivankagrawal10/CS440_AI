@@ -1,4 +1,3 @@
-
 import Minefield as mf
 import random
 
