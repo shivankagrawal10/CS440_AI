@@ -5,7 +5,7 @@ import numpy as np
 
 class MS_Game:
 
-	def __init__(self, dim: int, strategy: int, num_hints=2, p=.3, seed=-1):
+	def __init__(self, dim: int, strategy: int, num_hints=2, p=.2, seed=-1):
 		self._minefield = mf.Minefield(dim, p)
 		starting_hints = self.get_starting_hints(num_hints)
 		#print("Starting hints are", starting_hints)
@@ -41,20 +41,24 @@ class MS_Game:
 
 	def run(self):
 		#self._minefield.print_minefield()
-		self._agent.play_game()
+		x = self._agent.play_game()
 		if self._minefield.num_mines != 0:
 			self.score = self._agent.correct_flags / self._minefield.num_mines
-		'''
-		print(self._agent.correct_uncovers)
-		print(self._agent.incorrect_uncovers)
-		print(self._agent.correct_flags)
-		print(self._agent.incorrect_flags)
-		print(self.score)
-		print(self._minefield.num_mines)
-		'''
-
-
-driver = MS_Game(10, 2)
-driver.run()
-
-
+		
+		#print(self._agent.correct_uncovers)
+		#print(self._agent.incorrect_uncovers)
+		#print(self._agent.correct_flags)
+		#print(self._agent.incorrect_flags)
+		#print(self.score)
+		#print(self._minefield.num_mines)
+		return(x)
+def compare_avg():		
+        X = []
+        trials = 1000
+        for s in range(1,3):
+                for i in range(trials):
+                        driver = MS_Game(10, s)
+                        X.append(driver.run())
+        print(sum(X[:trials])/trials)
+        print(sum(X[trials:])/trials)
+compare_avg()
