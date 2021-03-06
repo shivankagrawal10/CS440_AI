@@ -19,10 +19,10 @@ class agent:
         self.stop = 0
 
     def play_game(self):
-        print("Starting Map:")
-        self.map.print_map()
+        #print("Starting Map:")
+        #self.map.print_map()
         while self.map.covered:
-            input("Proceed")
+            #input("Proceed")
             safes = set()
             mines = set()
             if self.strategy == constants.STRATEGY_1:
@@ -30,20 +30,20 @@ class agent:
             elif self.strategy == constants.STRATEGY_2:
                 self.strat_2(safes, mines)
             if not safes and not mines:
-                print('Random')
+                #print('Random')
                 random = self.randomchoice(self.map.covered)
-                if self.minefield.field[random[0],random[1]] == 1:
+                if self.minefield.field[random[0],random[1]] == 1:#1 means mine
                     mines.add(random)
                     self.stop = -1
                 else:
                     self.score+=1+self.stop
                     safes.add(random)
-            print("Predicted safe cells are", safes)
-            print("Predicted mine cells are", mines)
+            #print("Predicted safe cells are", safes)
+            #print("Predicted mine cells are", mines)
             self.process_safe_preds(safes)
             self.process_mine_preds(mines)
-            print("New map:")
-            self.map.print_map()
+            #print("New map:")
+            #self.map.print_map()
         return(self.score)
     def strat_1(self, safes, mines):
         for coord in self.map.safes:
@@ -53,6 +53,8 @@ class agent:
                 for n in neighbors:
                     if n._status == cs.Cell_Status.COVERED:
                         mines.add(n.loc)
+                        cell = self.map.get_cell(tup)
+                        cell._status = cs.Cell_Status.FLAGGED
             if (len(neighbors) - cell._clue) - cell._num_safe == cell._num_hidden:
                 for n in neighbors:
                     if n._status == cs.Cell_Status.COVERED:
@@ -94,14 +96,19 @@ class agent:
             if max_val == row[-1]:
                 for tup in pos_entries:
                     mines.add(tup)
+                    cell = self.map.get_cell(tup)
+                    cell._status = cs.Cell_Status.FLAGGED
                 for tup in neg_entries:
                     safes.add(tup)
+                    self.score+=1+self.stop
             elif min_val == row[-1]:
                 for tup in pos_entries:
                     safes.add(tup)
                     self.score+=1+self.stop
                 for tup in neg_entries:
                     mines.add(tup)
+                    cell = self.map.get_cell(tup)
+                    cell._status = cs.Cell_Status.FLAGGED
 
     def process_safe_preds(self, safes):
         for safe in safes:
@@ -133,11 +140,11 @@ class agent:
                 continue
             cell = self.map.get_cell(mine)
             is_mine = self.minefield.query(mine, constants.BLOCKED)
-            if is_mine:
+            if is_mine and not cell._status == cs.Cell_Status.FLAGGED:
                 cell._status = cs.Cell_Status.MINE
                 self.correct_flags += 1
                 self.map.mines.add(mine)
-            else:
+            elif not cell._status == cs.Cell_Status.FLAGGED:
                 cell._status = cs.Cell_Status.SAFE
                 self.incorrect_flags += 1
                 self.map.safes.add(mine)
