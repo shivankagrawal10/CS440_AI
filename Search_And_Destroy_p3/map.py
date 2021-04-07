@@ -39,6 +39,7 @@ class Map:
 
 	def query(self, cell):
 		answer = None
+		print(cell)
 		terrain = self.get_terrain(cell)
 		if cell == self.target_loc:
 			i, j = cell
@@ -70,7 +71,10 @@ class Map:
 		return answer
 
 	def get_terrain(self, cell):
-		i, j = cell
+		i, j = cell[0],cell[1]
+		print('hi')
+		print(i)
+		print(j)
 		return self.grid[i][j]
 
 
