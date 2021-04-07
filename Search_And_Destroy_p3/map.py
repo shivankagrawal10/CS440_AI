@@ -5,7 +5,9 @@ import constants
 class Map:
 	def __init__(self, dim):
 		self.grid = self.create_grid(dim)
+		self.target_loc = self.get_target_loc()
 		self.dim = dim
+		
 
 	def create_grid(self, dim):
 		grid = np.zeros((dim, dim))
@@ -21,6 +23,10 @@ class Map:
 				elif p < constants.maze_of_caves_prob:
 					grid[i][j] = constants.maze_of_caves
 		return grid
+	def get_target_loc(self):
+		i = np.random.randint(0, high=50)
+		j = np.random.randint(0, high=50)
+		return (i, j)
 
 	def print_map(self):
 		printable = ""
@@ -31,8 +37,45 @@ class Map:
 			printable += "\n"
 		print(printable)
 
-test = Map(10)
-test.print_map()
+	def query(self, cell):
+		answer = None
+		terrain = self.get_terrain(cell)
+		if cell == self.target_loc:
+			i, j = cell
+			if i < 0 or j < 0 or i >= self.dim or j >= self.dim:
+				print("Error")
+			p = random.random()
+			if terrain == constants.flat:
+				if p < .1:
+					answer = False
+				else:
+					answer = True
+			elif terrain == constants.hilly:
+				if p < .3:
+					answer = False
+				else:
+					answer = True
+			elif terrain == constants.forested:
+				if p < .7:
+					answer = False
+				else:
+					answer = True
+			elif terrain == constants.maze_of_caves:
+				if p < .9:
+					answer = False
+				else:
+					answer = True
+		else:
+			answer = False
+		return answer
+
+	def get_terrain(self, cell):
+		i, j = cell
+		return self.grid[i][j]
+
+
+#test = Map(10)
+#test.print_map()
 
 				
 
