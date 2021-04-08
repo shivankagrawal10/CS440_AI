@@ -39,7 +39,8 @@ class Agent:
                 while(not self.update_prob(check)):
                         priority = [[x[0]*self.map.get_terrain(x[1]),x[0],x[1]]
                             for x in self.belief]
-                        priority.sort()
+                        #priority.sort()
+                        priority = sorted(priority, key=lambda element: (element[0],-(abs(element[1][0]-check[1][0])+abs(element[1][1]-check[1][1]))))
                         check = priority[-1][1:]
                 #print('Done')
         
@@ -57,7 +58,11 @@ class Agent:
                                 curr*=terrain
                         now.append([curr,cell])
                 self.belief = now
-                self.belief.sort()
+                #self.belief.sort()
+                self.belief = sorted(self.belief, key=lambda element: (element[0],-(abs(element[1][0]-check[1][0])+abs(element[1][1]-check[1][1]))))
+                print(self.belief)
+                print(check[1])
+                input()
                 return(False)
 s1 = []
 s2 = []
@@ -65,7 +70,7 @@ for i in range(1000):
         start = timeit.default_timer()
         a = Agent(10,1)
         a.run()
-        s1.append(timeit.default_timer()-start)
+        #s1.append(timeit.default_timer()-start)
 
         start = timeit.default_timer()
         b = Agent(10,2)
