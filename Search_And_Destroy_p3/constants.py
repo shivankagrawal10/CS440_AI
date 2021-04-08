@@ -1,8 +1,3 @@
-flat = 0
-hilly = 1
-forested = 2
-maze_of_caves = 3
-
 flat = .1
 hilly = .3
 forested = .7
