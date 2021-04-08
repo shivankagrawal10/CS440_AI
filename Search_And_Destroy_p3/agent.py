@@ -17,12 +17,16 @@ class Agent:
                 #print('Cell to find')
                 #print(self.map.target_loc)
                 #print('-------')
+                #need to implement random starting cell
+                self.agent = [1/dim**2,(0,0)]
 
         def run(self):
                 if self.strategy == 1:
                         self.strategy1()
                 if self.strategy == 2:
                         self.strategy2()
+                if self.strategy == 3:
+                        self.strategy3()
 
         def strategy1(self):
                 check = self.belief[-1]
@@ -32,21 +36,28 @@ class Agent:
                 #print('Done')
 
         def strategy2(self):
-                priority = [[x[0]*self.map.get_terrain(x[1]),x[0],x[1]]
+                priority = [[x[0]*(1-self.map.get_terrain(x[1])),x[0],x[1]]
                             for x in self.belief]
                 priority.sort()
                 check = priority[-1][1:]
                 while(not self.update_prob(check)):
-                        priority = [[x[0]*self.map.get_terrain(x[1]),x[0],x[1]]
+                        priority = [[x[0]*(1-self.map.get_terrain(x[1])),x[0],x[1]]
                             for x in self.belief]
                         priority.sort()
                         check = priority[-1][1:]
                 #print('Done')
+
+        def strategy3(self):
+                check = self.agent
+                while(not self.update_prob(check)):
+                        #print(check)
+                        check = self.utility(self.agent[1],self.belief)
         
         def update_prob(self,check):
                 iprior,check_cell = check
                 if self.map.query(check_cell):
                         #game over
+                        print('Done')
                         return(True)
                 terrain = self.map.get_terrain(check_cell)
                 denominator = (iprior*terrain+(1-iprior))
@@ -59,9 +70,23 @@ class Agent:
                 self.belief = now
                 self.belief.sort()
                 return(False)
+
+        def utility(self,location,belief):
+                #return [prob , (x,y)]
+
+                #immediate utility
+                immediate = []
+                for prob,cell in self.belief:
+                        terrain = self.map.get_terrain(cell)
+                        dist = abs(location[0]-cell[0]) + abs(location[1]-cell[1])
+                        util = 100*21*terrain*prob - (1+dist) * (1-terrain*prob)
+                        immediate.append([util,prob,cell])
+                immediate.sort()
+                return(immediate[-1][1:])
+'''
 s1 = []
 s2 = []
-for i in range(1000):
+for i in range(100):
         start = timeit.default_timer()
         a = Agent(10,1)
         a.run()
@@ -74,3 +99,7 @@ for i in range(1000):
 
 print(sum(s1)/len(s1))
 print(sum(s2)/len(s1))
+'''
+
+a = Agent(10,3)
+a.run()
