@@ -8,7 +8,6 @@ class Map:
 		self.target_loc = self.get_target_loc()
 		self.dim = dim
 		
-
 	def create_grid(self, dim):
 		grid = np.zeros((dim, dim))
 		for i in range(dim):
@@ -23,6 +22,7 @@ class Map:
 				elif p < constants.maze_of_caves_prob:
 					grid[i][j] = constants.maze_of_caves
 		return grid
+
 	def get_target_loc(self):
 		i = np.random.randint(0, high=50)
 		j = np.random.randint(0, high=50)
@@ -32,7 +32,7 @@ class Map:
 		printable = ""
 		for i in range(self.dim):
 			for j in range(self.dim):
-				printable += str(int(self.grid[i][j])) + " "
+				printable += str(self.grid[i][j]) + " "
 
 			printable += "\n"
 		print(printable)
