@@ -1,17 +1,17 @@
-import agent
-import _map as m
+import agent_smith as agent
+import _map_smith as m
 import numpy as np
 
-def test(trials, dim):
+def test(trials, dim, bonus):
 	avg1 = 0
 	avg2 = 0
 	avg3 = 0
 	for t in range(trials):
 		my_map = m.Map(dim)
 		drop = get_drop_point(dim)
-		agent1 = agent.Agent(dim, 1, my_map, drop)
-		agent2 = agent.Agent(dim, 2, my_map, drop)
-		agent3 = agent.Agent(dim, 3, my_map, drop)
+		agent1 = agent.Agent(dim, 1, my_map, drop, bonus)
+		agent2 = agent.Agent(dim, 2, my_map, drop, bonus)
+		agent3 = agent.Agent(dim, 4, my_map, drop, bonus)
 		ag1 = agent1.run()
 		print(ag1)
 		ag2 = agent2.run()
@@ -33,4 +33,4 @@ def get_drop_point(dim):
     j = np.random.randint(0, high=dim)
     return (i, j)
 
-test(25, 50)
+test(100, 50, True)
