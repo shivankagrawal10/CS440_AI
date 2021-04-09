@@ -81,10 +81,3 @@ class Map:
                 valid_moves.append(move)
         i = np.random.randint(0, high=len(valid_moves))
         self.target_loc = valid_moves[i]
-
-
-#test = Map(10)
-#test.print_map()
-
-                
-

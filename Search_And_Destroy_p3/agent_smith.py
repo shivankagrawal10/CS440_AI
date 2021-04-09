@@ -58,9 +58,12 @@ class Agent:
         return self.num_searches + self.dist_trav
 
     def strategy3(self):
-        check = self.agent
-        while(not self.update_prob(check)):
-            check = self.utility(self.agent[1],self.belief)
+                check = [1/self.dim**2,(0,0)]
+                t_found = False
+                while(not t_found):
+                        t_found,_ = self.update_prob(check)
+                        check = self.utility(check[1],self.belief)
+                return(self.num_searches + self.dist_trav)
 
     def strategy4(self):
         priority = self.get_priority()
@@ -86,14 +89,19 @@ class Agent:
         return priority
 
     def utility(self,location,belief):
-        immediate = []
-        for prob,cell in self.belief:
-            terrain = self.map.get_terrain(cell)
-            dist = abs(location[0]-cell[0]) + abs(location[1]-cell[1])
-            util = 100*21*terrain*prob - (1+dist) * (1-terrain*prob)
-            immediate.append([util,prob,cell])
-        immediate.sort()
-        return(immediate[-1][1:])
+                immediate = []
+                for prob,cell in self.belief:
+                        cost = self.cost([prob,cell])
+                        terrain = self.map.get_terrain(cell)
+                        dist = abs(location[0]-cell[0]) + abs(location[1]-cell[1])
+                        max_cost = max([self.dist(cell,(0,0)),
+                                        self.dist(cell,(0,self.dim-1)),
+                                        self.dist(cell,(self.dim-1,0)),
+                                        self.dist(cell,(self.dim-1,self.dim-1))])
+                        util = (self.dim*self.dim)*(self.dim*2+1)*(1-terrain)*prob - cost * (1-(1-terrain)*prob)
+                        immediate.append([util,prob,cell])
+                immediate.sort()
+                return(immediate[-1][1:])
 
     def update_prob(self,check):
         iprior,check_cell = check
@@ -184,7 +192,6 @@ class Agent:
                 prob_left = prob_left - prob_per_belief if prob_left - prob_per_belief > 0 else 0
                 num_left = num_left - 1 if num_left - 1 > 0 else 1
                 prob_per_belief = prob_left / num_left if (prob_left - (prob_left / num_left)) > 0 else 0
-        '''
         self.belief = new_belief
         return posterior
 
@@ -195,4 +202,14 @@ class Agent:
         if abs(total_prob - 1) > .01:
             print("Total prob is", total_prob)
             input()
+
+    def cost(self, belief):
+        dist_trav = abs(belief[1][0] - self.agent_loc[0]) + abs(belief[1][1] - self.agent_loc[1])
+        p_success = (1 - self.map.get_terrain(belief[1])) * belief[0]
+        exp_future = self.dim ** 3
+        cost = 1 + dist_trav + (1 - p_success) * exp_future
+        return cost
+    
+    def dist(self,start,end):
+            return(abs(start[0]-end[0]) + abs(start[1]-end[1]))
 

@@ -11,7 +11,7 @@ def test(trials, dim, bonus):
 		drop = get_drop_point(dim)
 		agent1 = agent.Agent(dim, 1, my_map, drop, bonus)
 		agent2 = agent.Agent(dim, 2, my_map, drop, bonus)
-		agent3 = agent.Agent(dim, 4, my_map, drop, bonus)
+		agent3 = agent.Agent(dim, 4, my_map, drop, False)
 		ag1 = agent1.run()
 		print(ag1)
 		ag2 = agent2.run()

@@ -72,10 +72,18 @@ class Agent:
                 return(self.num_searches + self.dist_trav)
 
     def strategy4(self):
-        check = self.value()
-        while(not self.update_prob(check)):
-            check = self.value()
-            #print(check)
+        priority = self.get_priority()
+        check = priority[-1][1:]
+        t_found = False
+        while not t_found:
+            exp_num_srch = math.ceil(1 / (1 - self.map.get_terrain(check[1])))
+            for i in range(exp_num_srch):
+                t_found, posterior = self.update_prob(check)
+                if t_found:
+                    break
+                check = (posterior, check[1])
+            priority = self.get_priority()
+            check = priority[-1][1:]
         return self.num_searches + self.dist_trav
 
     def dumb_strat(self):
@@ -115,13 +123,14 @@ class Agent:
                 #immediate utility
                 immediate = []
                 for prob,cell in self.belief:
+                        cost = self.cost([prob,cell])
                         terrain = self.map.get_terrain(cell)
                         dist = abs(location[0]-cell[0]) + abs(location[1]-cell[1])
                         max_cost = max([self.dist(cell,(0,0)),
                                         self.dist(cell,(0,self.dim-1)),
                                         self.dist(cell,(self.dim-1,0)),
                                         self.dist(cell,(self.dim-1,self.dim-1))])
-                        util = (self.dim*self.dim)*(self.dim*2+1)*(1-terrain)*prob - (1+dist) * (1-(1-terrain)*prob)
+                        util = (self.dim*self.dim)*(self.dim*2+1)*(1-terrain)*prob - cost * (1-(1-terrain)*prob)
                         immediate.append([util,prob,cell])
                 immediate.sort()
                 return(immediate[-1][1:])

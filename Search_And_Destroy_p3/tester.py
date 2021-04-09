@@ -1,5 +1,5 @@
-import agent
-import _map as m
+import agent_smith as agent
+import _map_smith as m
 import numpy as np
 
 def test(trials, dim):
@@ -10,16 +10,13 @@ def test(trials, dim):
 	for t in range(trials):
 		my_map = m.Map(dim)
 		drop = get_drop_point(dim)
-		agent1 = agent.Agent(dim, 1, my_map, drop)
-		agent2 = agent.Agent(dim, 2, my_map, drop)
-		agent3 = agent.Agent(dim, 3, my_map, drop)
-		agent4 = agent.Agent(dim, 4, my_map, drop)
+		agent1 = agent.Agent(dim, 1, my_map, drop,False)
+		agent2 = agent.Agent(dim, 2, my_map, drop,False)
+		agent3 = agent.Agent(dim, 3, my_map, drop,False)
+		agent4 = agent.Agent(dim, 4, my_map, drop,False)
 		ag1 = agent1.run()
-		#print(ag1)
 		ag2 = agent2.run()
-		#print(ag2)
 		ag3 = agent3.run()
-		#print(ag3)
 		ag4 = agent4.run()
 		avg1 += ag1
 		avg2 += ag2
@@ -39,4 +36,4 @@ def get_drop_point(dim):
     j = np.random.randint(0, high=dim)
     return (i, j)
 
-test(250, 10)
+test(100, 10)
