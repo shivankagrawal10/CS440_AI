@@ -79,7 +79,7 @@ class Agent:
                     break
                 check = (posterior, check[1])
             priority = self.get_priority()
-            check = priority[-1][1:]
+            check = self.utility(check[1],self.belief)
         return self.num_searches + self.dist_trav
 
     def get_priority(self):

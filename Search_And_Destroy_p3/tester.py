@@ -36,4 +36,4 @@ def get_drop_point(dim):
     j = np.random.randint(0, high=dim)
     return (i, j)
 
-test(100, 10)
+test(25, 10)
