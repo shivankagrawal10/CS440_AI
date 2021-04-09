@@ -146,47 +146,41 @@ class Agent:
                 t_prob += belief[0]
             elif not within_diamond and belief[1] in in_diamond:
                 t_prob += belief[0]
-        #Normalize non-zero beliefs
+        #Normalize beliefs
         new_belief = []
-        zero_belief = []
-        posterior = iprior
-        total_belief = 0
         for belief in self.belief:
             new_prob = None
             if within_diamond:
-                if belief[0] == 0 and belief[1] in in_diamond:
-                    zero_belief.append(belief)
-                    continue
                 new_prob = 0 if belief[1] in out_diamond else belief[0] / abs(1 - t_prob)
             else:
-                if belief[0] == 0 and belief[1] in out_diamond:
-                    zero_belief.append(belief)
-                    continue
                 new_prob = 0 if belief[1] in in_diamond else belief[0] / abs(1 - t_prob)
             new_belief.append((new_prob, belief[1]))
-            total_belief += new_prob
-            if belief[1] == check_cell:
-                posterior = new_prob
-        #Normalize zero beliefs
-        prob_left = 1 - total_belief if 1 - total_belief > 0 else 0
-        num_left = len(zero_belief) if len(zero_belief) > 0 else 1
-        prob_per_belief = prob_left / num_left if (prob_left - (prob_left / num_left)) > 0 else 0
-        if prob_per_belief == 0:
-            for belief in zero_belief:
-                new_belief.append((prob_per_belief, belief[1]))
-                if belief[1] == check_cell:
-                    posterior = prob_per_belief
-        else:
-            for belief in zero_belief:
-                new_belief.append((prob_per_belief, belief[1]))
-                if belief[1] == check_cell:
-                    posterior = prob_per_belief
-                prob_left = prob_left - prob_per_belief if prob_left - prob_per_belief > 0 else 0
-                num_left = num_left - 1 if num_left - 1 > 0 else 1
-                prob_per_belief = prob_left / num_left if (prob_left - (prob_left / num_left)) > 0 else 0
-        '''
-        self.belief = new_belief
+        cell_to_belief = dict()
+        for belief in new_belief:
+            cell_to_belief[belief[1]] = belief[0]
+        belief_predict = []
+        #Predict beliefs
+        for cell in cells:
+            valid_transitions = self.get_valid_transitions(cell)
+            sum_prob = 0
+            for vt in valid_transitions:
+                prior = cell_to_belief[vt]
+                transit_prob = 1 / len(self.get_valid_transitions(vt))
+                sum_prob += (prior * transit_prob)
+            belief_predict.append((sum_prob, cell))
+            if cell == check_cell:
+                posterior = sum_prob
+        self.belief = belief_predict
         return posterior
+
+    def get_valid_transitions(self, cell):
+        transitions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        cells = [(cell[0] + t[0], cell[1] + t[1]) for t in transitions]
+        valid_cells = []
+        for cell_t in cells:
+            if cell_t[0] < self.dim and cell_t[0] >= 0 and cell_t[1] < self.dim and cell_t[1] >= 0:
+                valid_cells.append(cell_t)
+        return valid_cells
 
     def sanity_check(self):
         total_prob = 0
