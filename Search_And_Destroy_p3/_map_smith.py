@@ -7,7 +7,9 @@ class Map:
         self.grid = self.create_grid(dim)
         self.target_loc = self.get_target_loc(dim)
         self.dim = dim
-        
+    
+    #Method to create a map. Each cell has equal likelihood of being of a certain terrain.
+    #Importantly, the value in a cell is the probability of a successful search if the target is there.
     def create_grid(self, dim):
         grid = np.zeros((dim, dim))
         for i in range(dim):
@@ -23,11 +25,13 @@ class Map:
                     grid[i][j] = constants.maze_of_caves
         return grid
 
+    #Method to generate a random starting point for the target.
     def get_target_loc(self, dim):
         i = np.random.randint(0, high=dim)
         j = np.random.randint(0, high=dim)
         return (i, j)
 
+    #Helper method to visualize a map.
     def print_map(self):
         printable = ""
         for i in range(self.dim):
@@ -36,6 +40,9 @@ class Map:
             printable += "\n"
         print(printable)
 
+    #Helper method to respond to an agent's query regarding a cell. The map tells the
+    #agent whether or not the target is there based on the likelihood of success if the
+    #target is there.
     def query(self, cell):
         answer = None
         terrain = self.get_terrain(cell)
@@ -67,10 +74,12 @@ class Map:
             answer = False
         return (answer, within_diamond)
 
+    #Helper method to get the likelihood of a successful search at a specific cell.
     def get_terrain(self, cell):
         i, j = cell[0],cell[1]
         return self.grid[i][j]
 
+    #Helper method to move the target.
     def move_target(self):
         vectors = [(0, 1), (0, -1), (1, 0), (-1, 0)]
         t = self.target_loc
