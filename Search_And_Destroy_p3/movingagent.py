@@ -33,15 +33,12 @@ class Agent:
         elif self.strategy == 2:
             score = self.strategy2()
         elif self.strategy == 3:
-            score = self.dumb_strat()
+            score = self.strategy3()
         return score
 
     def strategy1(self):
         check = self.belief[-1]
-        t_found = False
-        while not t_found:
-            t_found, _ = self.update_prob(check)
-            self.belief.sort(key=lambda element: (element[0], -(abs(element[1][0] - check[1][0]) + abs(element[1][1] - check[1][1]))))
+        while(not self.update_prob(check)):
             check = self.belief[-1]
             #print(check)
         return self.num_searches + self.dist_trav
@@ -52,12 +49,10 @@ class Agent:
                     for x in self.belief]
         priority.sort(key=lambda element: (element[0], -(abs(element[2][0] - self.agent_loc[0]) + abs(element[2][1] - self.agent_loc[1]))))
         check = priority[-1][1:]
-        t_found = False
-        while not t_found:
-            t_found, _ = self.update_prob(check)
+        while(not self.update_prob(check)):
             priority = [[x[0] * (1 - self.map.get_terrain(x[1])),x[0],x[1]]
                 for x in self.belief]
-            priority.sort(key=lambda element: (element[0], -(abs(element[2][0] - check[1][0]) + abs(element[2][1] - check[1][1]))))
+            priority = sorted(priority, key=lambda element: (element[0], -(abs(element[2][0] - check[1][0]) + abs(element[2][1] - check[1][1]))))
             check = priority[-1][1:]
         return self.num_searches + self.dist_trav
         #print('Done')
@@ -68,44 +63,6 @@ class Agent:
                         #print(check)
                         check = self.utility(check[1],self.belief)
                 return(self.num_searches + self.dist_trav)
-
-    def strategy4(self):
-        check = self.value()
-        while(not self.update_prob(check)):
-            check = self.value()
-            #print(check)
-        return self.num_searches + self.dist_trav
-
-    def dumb_strat(self):
-        priority = [[x[0] * (1 - self.map.get_terrain(x[1])), x[0], x[1]]
-                    for x in self.belief]
-        priority.sort(key=lambda element: (element[0], -(abs(element[2][0] - self.agent_loc[0]) + abs(element[2][1] - self.agent_loc[1]))))
-        check = priority[-1][1:]
-        t_found = False
-        while not t_found:
-            terrain = self.map.get_terrain(check[1])
-            num_checks = 0
-            if terrain == constants.flat:
-                num_checks = 2
-            elif terrain == constants.hilly:
-                num_checks = 2
-            elif terrain == constants.forested:
-                num_checks = 4
-            elif terrain == constants.maze_of_caves:
-                num_checks = 10
-            else:
-                print('error')
-            for i in range(num_checks):
-                t_found, posterior = self.update_prob(check)
-                if t_found:
-                    break
-                check = (posterior, check[1])
-            priority = [[x[0] * (1 - self.map.get_terrain(x[1])),x[0],x[1]]
-                for x in self.belief]
-            priority.sort(key=lambda element: (element[0], -(abs(element[2][0] - check[1][0]) + abs(element[2][1] - check[1][1]))))
-            check = priority[-1][1:]
-            #print(self.num_searches + self.dist_trav)
-        return self.num_searches + self.dist_trav
 
     def utility(self,location,belief):
                 #return [prob , (x,y)]
@@ -126,8 +83,6 @@ class Agent:
     def dist(self,start,end):
             return(abs(start[0]-end[0]) + abs(start[1]-end[1]))
 
-
-
     def update_prob(self,check):
         iprior,check_cell = check
         self.num_searches += 1
@@ -136,23 +91,21 @@ class Agent:
         self.agent_loc = check_cell
         if self.map.query(check_cell):
             #game over
-            return (True, iprior)
+            return(True)
         terrain = self.map.get_terrain(check_cell)
         denominator = (iprior * terrain + (1 - iprior))
         now = []
-        posterior = iprior
         for prior,cell in self.belief:
             curr = prior / denominator
             if cell == check_cell:
                 curr *= terrain
-                posterior = curr
             now.append([curr,cell])
-        self.belief = now
+        self.belief = sorted(now, key=lambda element: (element[0], -(abs(element[1][0] - check[1][0]) + abs(element[1][1] - check[1][1]))))
         self.sanity_check()
         #print(self.belief)
         #print(check[1])
         #input()
-        return(False, posterior)
+        return(False)
 
     def min_cost(self):
         base = self.num_searches + self.dist_trav
@@ -221,6 +174,10 @@ class Agent:
         #print(U_start)
         #input()
         return belief
+
+    def information_gain(self):
+            return(0)
+        
 
     def sanity_check(self):
         total_prob = 0

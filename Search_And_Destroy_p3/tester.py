@@ -13,11 +13,11 @@ def test(trials, dim):
 		agent2 = agent.Agent(dim, 2, my_map, drop)
 		agent3 = agent.Agent(dim, 3, my_map, drop)
 		ag1 = agent1.run()
-		print(ag1)
+		#print(ag1)
 		ag2 = agent2.run()
-		print(ag2)
+		#print(ag2)
 		ag3 = agent3.run()
-		print(ag3)
+		#print(ag3)
 		avg1 += ag1
 		avg2 += ag2
 		avg3 += ag3
@@ -33,4 +33,4 @@ def get_drop_point(dim):
     j = np.random.randint(0, high=dim)
     return (i, j)
 
-test(25, 50)
+test(100, 10)
