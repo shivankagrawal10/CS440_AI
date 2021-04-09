@@ -33,7 +33,9 @@ class Agent:
         elif self.strategy == 2:
             score = self.strategy2()
         elif self.strategy == 3:
-            score = self.dumb_strat()
+            score = self.strategy3()
+        elif self.strategy == 4:
+            score = self.strategy4()
         return score
 
     def strategy1(self):
@@ -166,6 +168,28 @@ class Agent:
             if U_start_step > U_max:
                 U_max = U_start_step
                 argmax = belief
+
+    def value(self):
+        min_cost = np.Inf
+        min_belief = None
+        for belief in self.belief:
+            #print(belief)
+            #input()
+            belief_cost = self.cost(belief)
+            #print(belief)
+            if belief_cost < min_cost:
+                min_cost = belief_cost
+                min_belief = belief
+        return min_belief
+
+    def cost(self, belief):
+        dist_trav = abs(belief[1][0] - self.agent_loc[0]) + abs(belief[1][1] - self.agent_loc[1])
+        p_success = (1 - self.map.get_terrain(belief[1])) * belief[0]
+        exp_future = self.dim ** 3
+        cost = 1 + dist_trav + (1 - p_success) * exp_future
+        #print(cost)
+        #input()
+        return cost
 
     def value_iteration(self):
         #input()
