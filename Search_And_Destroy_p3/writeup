@@ -1,0 +1,16 @@
+P(T found in i | T was not found in i) = P(T will found in i ^ T was not found in i) / P(T was not found in i)
+
+T found in i = T in i ^ Successful check of i
+
+P(T in i ^ Successful check of i | T was not found in i) = P(T was not found in i | T in i ^ Successful check of i ) * P(T in i ^ Successful check of i) / P(T was not found in i)
+
+P(T was not found in i | T in i ^ Successful check of i ) = P(T was not found in i | T in i)
+
+= P(T was not found in i | T in i) * P(T in i ^ Successful check of i) / P(T was not found in i)
+= P(T was not found in i | T in i) * P(T in i) * P(Successful check of i | T in i) / P(T was not found in i)\
+= terrain * prior (1-terrain) / P
+
+P(T is in i | T was not found in i) 
+
+
+
