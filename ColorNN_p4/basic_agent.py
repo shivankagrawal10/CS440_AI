@@ -4,7 +4,7 @@ import patch as p
 import kmeans as km
 import five_color as fc
 import gray as g
-
+import k_means
 
 class basic_agent:
 
@@ -13,7 +13,8 @@ class basic_agent:
 
 	def run(self):
 		clr_img = np.array(plt.imread(self.img_path))
-		five_color = fc.five_color(self.img_path)
+		clustered = k_means.k_means('mountains.jpg')
+		five_color = clustered.run() #fc.five_color(self.img_path) 
 		gray_img = g.color_to_gray(self.img_path)
 		rows, cols, _ = clr_img.shape
 		div_line = cols // 2
