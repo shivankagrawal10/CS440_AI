@@ -3,14 +3,13 @@ import matplotlib.pyplot as plt
 import random
 import math
 from mpl_toolkits import mplot3d
-import plotly.express as px
 
 class k_means:
 
     def __init__(self, num_clusters : int, original_rbg : np.array):
         self.centroids = [(0,0,0) for i in range(num_clusters)]
         self.centroids_dict = dict()
-        self.original_rbg = original_rbg
+        self.original_rbg = np.array(original_rbg,dtype='i')
         self.num_clusters = num_clusters
         for i in range(num_clusters):
             rand = original_rbg[random.randint(0,original_rbg.shape[0]-1),random.randint(0,original_rbg.shape[1]-1),:] 
@@ -22,12 +21,11 @@ class k_means:
     def run(self):
         print(first.centroids)
         while(True):
-            first.partition()
+            #first.partition()
+            first.partition2()
             first.recenter()
             print(first.centroids)
             if(self.converge == 1): break
-            #print("continue?")
-            #inp = input()
             #if(inp == "no"): break
         #print(self.centroids_dict)
         self.create_clustered_img()
@@ -52,12 +50,12 @@ class k_means:
     def init_dict(self):
         self.centroids_dict = dict()
         for i in self.centroids:
-            self.centroids_dict[i]=np.empty((0,5))
+            self.centroids_dict[i]=np.empty((0,self.num_clusters))
 
     def partition(self):
         self.init_dict()
-        for i in range(self.original_rbg.shape[0]):
-            for j in range(self.original_rbg.shape[1]):
+        for i in range(self.original_rbg.shape[0]//10):
+            for j in range(self.original_rbg.shape[1]//10):
                 current_rbg = list(self.original_rbg[i,j,:])
                 current_rbg.append(i)
                 current_rbg.append(j)
@@ -67,6 +65,26 @@ class k_means:
                         min_dist = current_rbg_dist
                         min_ind = k
                 self.centroids_dict[self.centroids[min_ind]] = np.append(self.centroids_dict[self.centroids[min_ind]], np.array([current_rbg]),axis = 0)
+        print(self.centroids_dict[self.centroids[0]])
+        print("partition 1 done")
+    def partition2(self):
+        self.init_dict()
+        distances = np.zeros((self.num_clusters,self.original_rbg.shape[0],self.original_rbg.shape[1]))
+        for k in range(self.num_clusters):
+            distances[k] = ((self.original_rbg[:,:,0]-self.centroids[k][0])**2 + (self.original_rbg[:,:,1]-self.centroids[k][1])**2 + (self.original_rbg[:,:,2]-self.centroids[k][2])**2)**.5
+        min_dist = np.argmin(distances,axis = 0)
+
+        for k in range(self.num_clusters):
+            vals = min_dist == k
+            x = self.original_rbg[vals].astype('i')
+            y = np.argwhere(vals==True)
+            #print(len([i for i in vals.flatten() if i ==True]))
+            #print(self.original_rbg[vals])
+            self.centroids_dict[self.centroids[k]] = np.concatenate((x,y),axis = 1)
+        #print(len(self.centroids_dict[self.centroids[k]]))
+        #print(self.centroids_dict[self.centroids[0]])
+        #print('partition 2 done')
+            
     
     def distance(self, current_coord, centroids_ind):
         distance = 0
@@ -91,8 +109,9 @@ class k_means:
             self.centroids_dict[del_key[key]] = self.centroids_dict.pop(key) 
             #print(f"removing {key}")
         #    del(self.centroids_dict[key])
-        if(same_count > 2): 
+        if(same_count > self.num_clusters//2): 
             self.converge = 1
+
 
     def create_clustered_img(self):
         for color in self.centroids_dict:
@@ -103,10 +122,10 @@ class k_means:
         self.clustered_rbg = self.clustered_rbg.astype(int)
         print(self.clustered_rbg)
 #img1 = plt.imread('dog.jpg') #[(193, 156, 109), (93, 69, 25), (26, 25, 10), (150, 114, 67), (207, 193, 170)]
-img1 = plt.imread('scenery.jpg')
+img1 = plt.imread('mountains.jpg')
 #img1 = plt.imread('mountains.jpg') # [(55, 67, 66), (177, 229, 234), (35, 131, 169), (183, 185, 36), (111, 177, 195)]
 print(img1.shape)
-first = k_means(5,img1)
+first = k_means(10,img1)
 first.run()
 plt.imshow(first.clustered_rbg)
 plt.show()
