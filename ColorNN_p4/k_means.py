@@ -28,7 +28,8 @@ class k_means:
             if(self.converge == 1): break
             #if(inp == "no"): break
         #print(self.centroids_dict)
-        self.create_clustered_img()
+        #self.create_clustered_img()
+        return self.clustered_rbg
         '''
         #plotly option
         fig = px.scatter_3d(x= first.original_rbg[:,:,0].flatten(),y= first.original_rbg[:,:,1].flatten(), z= first.original_rbg[:,:,2].flatten())#, color='species')
