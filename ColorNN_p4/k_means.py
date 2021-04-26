@@ -19,16 +19,16 @@ class k_means:
         self.clustered_rbg = np.zeros(self.original_rbg.shape)
 
     def run(self):
-        print(first.centroids)
+        print(self.centroids)
         while(True):
             #first.partition()
-            first.partition2()
-            first.recenter()
-            print(first.centroids)
+            self.partition2()
+            self.recenter()
+            print(self.centroids)
             if(self.converge == 1): break
             #if(inp == "no"): break
         #print(self.centroids_dict)
-        #self.create_clustered_img()
+        self.create_clustered_img()
         return self.clustered_rbg
         '''
         #plotly option
@@ -74,10 +74,9 @@ class k_means:
         for k in range(self.num_clusters):
             distances[k] = ((self.original_rbg[:,:,0]-self.centroids[k][0])**2 + (self.original_rbg[:,:,1]-self.centroids[k][1])**2 + (self.original_rbg[:,:,2]-self.centroids[k][2])**2)**.5
         min_dist = np.argmin(distances,axis = 0)
-
         for k in range(self.num_clusters):
             vals = min_dist == k
-            x = self.original_rbg[vals].astype('i')
+            x = self.original_rbg[vals]
             y = np.argwhere(vals==True)
             #print(len([i for i in vals.flatten() if i ==True]))
             #print(self.original_rbg[vals])
@@ -110,7 +109,7 @@ class k_means:
             self.centroids_dict[del_key[key]] = self.centroids_dict.pop(key) 
             #print(f"removing {key}")
         #    del(self.centroids_dict[key])
-        if(same_count > self.num_clusters//2): 
+        if(same_count > self.num_clusters//5): 
             self.converge = 1
 
 
@@ -119,14 +118,14 @@ class k_means:
             for coordinate in self.centroids_dict[color]:
                 for i in range(3):
                     #print(coordinate[3])
+                    #print(int(color[i]))
                     self.clustered_rbg[int(coordinate[3]),int(coordinate[4]),i] = int(color[i])
-        self.clustered_rbg = self.clustered_rbg.astype(int)
-        print(self.clustered_rbg)
+        self.clustered_rbg = self.clustered_rbg.astype('i')
 #img1 = plt.imread('dog.jpg') #[(193, 156, 109), (93, 69, 25), (26, 25, 10), (150, 114, 67), (207, 193, 170)]
 img1 = plt.imread('mountains.jpg')
 #img1 = plt.imread('mountains.jpg') # [(55, 67, 66), (177, 229, 234), (35, 131, 169), (183, 185, 36), (111, 177, 195)]
 print(img1.shape)
-first = k_means(10,img1)
+first = k_means(5,img1)
 first.run()
 plt.imshow(first.clustered_rbg)
 plt.show()
