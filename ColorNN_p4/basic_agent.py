@@ -32,7 +32,8 @@ class basic_agent:
 		#for row in range(rows):
 		t=[]
 		for cores in range(8):
-			t.append( threading.Thread(target=self.thread_color(),args=()) )
+                        print(cores)
+		        t.append(threading.Thread(target=self.thread_color(),args=()))
 			t[-1].start()
 		for thr in t:
 			thr.join()
