@@ -31,9 +31,9 @@ class basic_agent:
 		self.patches = p.patchify(self.gray_img)
 		#for row in range(rows):
 		t=[]
-		for cores in range(8):
-                        print(cores)
-		        t.append(threading.Thread(target=self.thread_color(),args=()))
+		for cores in range(20):
+			print(cores)
+			t.append(threading.Thread(target=self.thread_color,args=()))
 			t[-1].start()
 		for thr in t:
 			thr.join()
