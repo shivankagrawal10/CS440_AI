@@ -120,7 +120,7 @@ class k_means:
                     #print(coordinate[3])
                     #print(int(color[i]))
                     self.clustered_rbg[int(coordinate[3]),int(coordinate[4]),i] = int(color[i])
-        self.clustered_rbg = self.clustered_rbg.astype('i')
+        self.clustered_rbg = self.clustered_rbg.astype(np.uint8)
 '''
 #img1 = plt.imread('dog.jpg') #[(193, 156, 109), (93, 69, 25), (26, 25, 10), (150, 114, 67), (207, 193, 170)]
 img1 = plt.imread('mountains.jpg')
