@@ -101,7 +101,7 @@ class k_means:
         for key in self.centroids_dict:
             val = self.centroids_dict[key]
             length = len(val[:,0])
-            self.centroids.append((round(sum(val[:,0])/length),round(sum(val[:,1])/length),round(sum(val[:,2])/length)))
+            self.centroids.append((sum(val[:,0])//length,sum(val[:,1])//length,sum(val[:,2])//length))
             if(self.centroids[-1] == key): same_count+=1
             del_key[key] = self.centroids[-1]
         
