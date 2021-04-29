@@ -16,7 +16,7 @@ import multiprocessing as mp
 #for saving image
 from PIL import Image
 
-#from numba import jit, cuda
+from numba import jit, cuda
 
 class basic_agent:
 
@@ -59,27 +59,28 @@ class basic_agent:
 		#plt.show()
 		#print(self.new_img)
 		t=[]
-		temp = mp.Array("i",self.new_img.flatten())
+		#temp = mp.Array("i",self.new_img.flatten())
 		print(self.new_img.dtype)
 		#initializing thread for each core
 		for cores in range(self.threads):
 			print(cores)
 			#t.append(threading.Thread(target=self.thread_color,args=()))
-			t.append(Process(target=self.thread_color,args=(self.rows_complete,temp)))
-			t[-1].start()
+			#t.append(Process(target=self.thread_color,args=(self.rows_complete,temp)))
+			#t[-1].start()
+			self.thread_color(self.rows_complete,)
 			self.rows_complete += 1
-		for thr in t:
-			thr.join()
-		self.new_img = np.array(temp,np.uint8).reshape(self.new_img.shape)
-		#plt.imshow(self.new_img)
-		#plt.show()
+		
+		#for thr in t:
+		#	thr.join()
+		#self.new_img = np.array(temp,np.uint8).reshape(self.new_img.shape)
+		
 		img = Image.fromarray(self.new_img, 'RGB')
-		img.save("clust_mount_10.jpg")
+		img.save("clust_mount_gpu.jpg")
 		return self.new_img
 
-	#@jit(target="cuda")
+	@jit(target="cuda")
 	#@jit(nopython=True, parallel=True)
-	def thread_color(self,rows_complete,temp):
+	def thread_color(self,rows_complete):
 		#temp_rgb = np.array(temp,np.uint8).reshape(self.new_img.shape)
 		while(rows_complete < self.rows-1):
 			#temp_rgb = np.array(temp,np.uint8).reshape(self.new_img.shape)
@@ -93,10 +94,12 @@ class basic_agent:
 				six_sim = p.similar_patch(patch, self.patches)
 				new_clr = p.color_lookup(self.five_color, six_sim)
 				#print(self.new_img[row,col-1,:])
-				#self.new_img[row,col,:] = new_clr
+				self.new_img[row,col,:] = new_clr
 				#temp_rgb [row,col,:] = new_clr
-				for i in range(3):
-					temp [np.ravel_multi_index((row,col,i),(self.rows,self.cols,3))] = new_clr[i]
+				
+				#for i in range(3):
+				#	temp [np.ravel_multi_index((row,col,i),(self.rows,self.cols,3))] = new_clr[i]
+				
 				#print(self.new_img[row,col,:])
 				col += 1
 				#print("Colored pixel", row, ",", col)
