@@ -1,12 +1,22 @@
+#for handling image rgb array
 import numpy as np
+#for visualizing image
 import matplotlib.pyplot as plt
+#to create 9x1 vector of grayscale values surrounding center
 import patch as p
+#convert image to gray
 import gray as g
+#reduce image to k colors
 import k_means
+#allows single core threading
 import threading
+#allows multiprocessor threading
 from multiprocessing import Process,Manager
 import multiprocessing as mp
+#for saving image
 from PIL import Image
+
+#from numba import jit, cuda
 
 class basic_agent:
 
@@ -34,7 +44,7 @@ class basic_agent:
 		#self.new_img.save("small_test.png")
 		#plt.imshow(self.new_img)
 		#plt.show()
-		clustered = k_means.k_means(5,self.new_img)
+		clustered = k_means.k_means(10,self.new_img)
 		
 		self.five_color = clustered.run() #fc.five_color(self.img_path) 
 		self.clr_img = clustered.clustered_rbg
@@ -64,10 +74,11 @@ class basic_agent:
 		#plt.imshow(self.new_img)
 		#plt.show()
 		img = Image.fromarray(self.new_img, 'RGB')
-		img.save("clust_mount.jpg")
+		img.save("clust_mount_10.jpg")
 		return self.new_img
 
-	
+	#@jit(target="cuda")
+	#@jit(nopython=True, parallel=True)
 	def thread_color(self,rows_complete,temp):
 		#temp_rgb = np.array(temp,np.uint8).reshape(self.new_img.shape)
 		while(rows_complete < self.rows-1):
@@ -98,3 +109,9 @@ b_agent = basic_agent('mountains.jpg')
 #b_agent = basic_agent('small_test.jpg')
 b_agent.run()
 
+'''
+run stats:
+real	147m32.627s
+user	4897m12.748s
+sys	425m26.223s
+'''
