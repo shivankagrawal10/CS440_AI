@@ -25,9 +25,7 @@ def build_patch(img, r, c):
 
 #returns indices for six most similar patches
 def similar_patch(patch, patches):
-    patches_np = np.array(patches)
-    patch_np = np.array(patch)
-    norms = np.linalg.norm(patch_np - patches_np, axis=2)
+    norms = np.linalg.norm(patch - patches, axis=2)
     patch_norm = []
     for i in range(len(patches)):
         patch_norm.append((norms[i].sum(), i))
