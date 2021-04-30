@@ -1,10 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import patch as p
-import kmeans as km
-import five_color as fc
 import gray as g
-import k_means
+import k_means as k
 
 class basic_agent:
 
@@ -13,8 +11,10 @@ class basic_agent:
 
 	def run(self):
 		clr_img = np.array(plt.imread(self.img_path))
-		clustered = k_means.k_means('mountains.jpg')
-		five_color = clustered.run() #fc.five_color(self.img_path) 
+		clustered = k.k_means(5, clr_img)
+		five_color = clustered.run()
+		print("Colored shape:", clr_img.shape)
+		print("five_color shape:", five_color.shape)
 		gray_img = g.color_to_gray(self.img_path)
 		rows, cols, _ = clr_img.shape
 		div_line = cols // 2
@@ -35,6 +35,6 @@ class basic_agent:
 		plt.show()
 		return clr_img
 
-b_agent = basic_agent('dog_med.jpeg')
+b_agent = basic_agent('mountains.jpg')
 b_agent.run()
 
