@@ -15,7 +15,7 @@ def patchify(img):
             if col == 0:
                 continue
             patches.append(build_patch(img, row, col))
-    return patches
+    return np.array(patches)
 
 #returns a 9-item list of pixel values that describe a patch.
 def build_patch(img, r, c):

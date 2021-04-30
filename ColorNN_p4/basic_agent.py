@@ -34,6 +34,10 @@ class basic_agent:
 		self.rows, self.cols, _ = self.clustered_img.shape
 		self.div_line = self.cols // 2
 		self.patches = p.patchify(self.gray_img)
+		print(self.patches.shape)
+		indexes = np.random.choice(np.arange(self.patches.shape[0]),1000)
+		self.patches = self.patches[indexes]
+		print(self.patches.shape)
 		
 		self.new_img[:,self.div_line:,:] = self.gray_img[:,self.div_line:,:]
 		
@@ -59,7 +63,7 @@ class basic_agent:
 				
 				self.new_img[row,col,:] = new_clr #np.array(temp)
 				col += 1
-				print("Colored pixel", row, ",", col)
+				#print("Colored pixel", row, ",", col)
 			print(f"Row: {row} | Progress {row / self.rows}")
 		
 b_agent = basic_agent('mountains.jpg')
