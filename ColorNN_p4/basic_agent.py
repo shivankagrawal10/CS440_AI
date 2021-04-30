@@ -31,7 +31,7 @@ class basic_agent:
 		print(self.five_color)
 		self.clustered_img = clustered.clustered_rbg
 		self.gray_img = g.color_to_gray(self.img_path)
-		self.rows, self.cols, _ = self.clr_img.shape
+		self.rows, self.cols, _ = self.clustered_img.shape
 		self.div_line = self.cols // 2
 		self.patches = p.patchify(self.gray_img)
 		
@@ -52,7 +52,7 @@ class basic_agent:
 			while col < self.div_line+20:#self.cols - 1:
 				patch = p.build_patch(self.gray_img, row, col)
 				six_sim = p.similar_patch(patch, self.patches)
-				new_clr = p.color_lookup(self.clust, six_sim)
+				new_clr = p.color_lookup(self.clustered_img, six_sim)
 				
 				#print(self.new_img[row,col-1,:])
 				#temp = [i for i in self.five_color[0]]
