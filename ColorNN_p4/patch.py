@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import kmeans as k
 import copy
 from operator import itemgetter
 
