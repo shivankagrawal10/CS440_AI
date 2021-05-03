@@ -15,8 +15,9 @@ def dL(w, x, y):
 	dot = np.dot(w, x)
 	#print("DOT",dot)
 	#input()
-	ret = (2)*(y - (1*sigmoid(dot)))*(-1)*(1)*(sigmoid(dot))*(1 - sigmoid(dot))*x
-	#print("DL",ret)
+	ret = (sigmoid(dot)-y)*x
+	#ret = (2)*(y - (1*sigmoid(dot)))*(-1)*(1)*(sigmoid(dot))*(1 - sigmoid(dot))*x
+	#print("DL",ret) 
 	return ret
 
 def sigmoid(z):
@@ -37,7 +38,7 @@ def sigmoid(z):
 
 def L(w, x, y):
 	dot = np.dot(w, x)
-	return (y - (1*sigmoid(dot)))**2
+	return abs(y - (1*sigmoid(dot)))*255
 
 
 
