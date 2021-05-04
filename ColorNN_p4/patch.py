@@ -24,8 +24,8 @@ def build_patch(img, r, c):
     return img[coords[:,0],coords[:,1]]
 
 def build_big_patch(img,r,c):
-    x = img[r-2:r+3,c-2:c+3,:]
-    return x.reshape(25,3)
+    x = img[r-4:r+5,c-4:c+5,:]
+    return x.reshape(81,3)
 
 #returns indices for six most similar patches
 def similar_patch(patch, patches):
