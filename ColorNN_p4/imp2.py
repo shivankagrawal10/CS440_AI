@@ -4,12 +4,15 @@ import matplotlib.pyplot as plt
 import patch as p
 import gray as g
 from numpy.random import default_rng
+import math
 
 class improved_agent:
 
-	def __init__(self, img_path, alpha):
+	def __init__(self, img_path, minalpha, maxalpha, epochs):
 		self.img_path = img_path
-		self.alpha = alpha
+		self.minalpha = minalpha
+		self.maxalpha = maxalpha
+		self.epochs = epochs
 		self.rng = default_rng()
 		self.clr_img = np.array(plt.imread(self.img_path))
 		self.gray_img = g.color_to_gray(self.img_path)
@@ -20,11 +23,93 @@ class improved_agent:
 	def build_model(self, r_g_b_ind):
 		rows, cols, _ = self.clr_img.shape
 		w_t = np.zeros(10)
-		w_tplus = np.full(10, 1)
-		i = 1
-		while i < 1000000:
+		w_tplus = np.zeros(10)
+		for i in range(10):
+			w_tplus[i] =  10 * self.rng.random() - 5
+			if w_tplus[i] == 0:
+				w_tplus[i] = 1
+		i = 0
+		losses = []
+		s = 0
+		e = 0
+		while i < 10000000:
+			#calculating new weights
 			w_t = np.array(w_tplus)
 			r = self.rng.integers(1, high=rows-1)
 			c = self.rng.integers(1, high=(cols // 2))
-			p = p.build_patch(self.gray_img, r, c)
-			x = [((np.max(a) - 128) / 255) for a in p ]
+			patch = p.build_patch(self.gray_img, r, c)
+			#x = [np.max(a) for a in patch]
+			x = [((np.max(a) - 128) / 255) for a in patch]
+			x.insert(0, 1)
+			x = np.array(x)
+			y = self.clr_img[r][c][r_g_b_ind]
+			y = (y - 128) / 255
+			alpha = self.minalpha + (1/2) * (self.maxalpha - self.minalpha) * (1 + np.cos((e/self.epochs) * math.pi))
+			w_tplus = gr.w_tplus(w_t, x, y, alpha)
+
+			if (w_tplus - w_t).sum() == 0:
+				print("No change")
+			#else:
+			#	print((w_tplus - w_t).sum())
+			#input()
+
+			#checking loss
+			r = self.rng.integers(1, high=rows-1)
+			c = self.rng.integers(1, high=(cols // 2))
+			patch = p.build_patch(self.gray_img, r, c)
+			x = [((np.max(a) - 128) / 255) for a in patch]
+			#x = [((np.max(a) - 128) / 255) for a in x ]
+
+			x.insert(0, 1)
+			x = np.array(x)
+			y = self.clr_img[r][c][r_g_b_ind]
+			y = (y - 128) / 255
+			loss = gr.L(w_tplus, x, y)
+			#print(loss)
+			s += loss
+			if i % self.epochs == 0:
+				s /= self.epochs
+				losses.append(s)
+				s = 0
+				e = 0
+				print(losses[-1])
+				print(w_tplus)
+
+				#self.alpha *= .999
+			i += 1
+			e += 1
+			#print("Iteration", i, "complete.")
+		print("Done building model", r_g_b_ind)
+		return w_tplus
+
+	def run(self):
+		rows, cols, _ = self.clr_img.shape
+		div_line = cols // 2
+		for row in range(rows):
+			if row == 0 or row == rows-1:
+				continue
+			col = div_line
+			while col < cols - 1:
+				patch = p.build_patch(self.gray_img, row, col)
+				x = [(np.max(a) - 128) / 255 for a in patch]
+				#x = [((np.max(a) - 128) / 255) for a in x ]
+				x.insert(0, 1)
+				x = np.array(x)
+				r = int(128 + 255 * gr.sigmoid(np.dot(self.red_model, x)))
+				g = int(128 + 255 * gr.sigmoid(np.dot(self.green_model, x)))
+				b = int(128 + 255 * gr.sigmoid(np.dot(self.blue_model, x)))
+				#if (row % 10 == 0):
+				#	print(r)
+				#	print(g)
+				#	print(b)
+				#	input()
+				self.clr_img[row][col] = np.array([r,g,b])
+				col += 1
+				print("Colored pixel", row, ",", col)
+			print("Progress", row / rows)
+		plt.imshow(self.clr_img)
+		plt.show()
+		return self.clr_img
+
+impr_agent = improved_agent("mountains.jpg", .01, .01, 5000)
+impr_agent.run()

@@ -13,7 +13,6 @@ def dL(w, x, y):
 	return (2)*(y + .5 - (1*sig))*(-1)*(1)*(sig)*(1 - sig)*x
 
 def sigmoid(z):
-	#print(z)
 	coeff = None
 	try:
 		coeff = math.e**(-z)
