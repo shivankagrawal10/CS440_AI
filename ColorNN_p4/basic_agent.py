@@ -67,6 +67,6 @@ class basic_agent:
 				#print("Colored pixel", row, ",", col)
 			print(f"Row: {row} | Progress {row / self.rows}")
 		
-b_agent = basic_agent('mountains.jpg')
-#b_agent = basic_agent('small_test.jpg')
+#b_agent = basic_agent('mountains.jpg')
+b_agent = basic_agent('small_test.jpg')
 b_agent.run()

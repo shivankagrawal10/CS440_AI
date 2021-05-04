@@ -19,11 +19,9 @@ def sigmoid(z):
 		coeff = math.e**(-z)
 	except:
 		if z > 0:
-			print("too big")
 			return 1
 
 		if z < 0:
-			print("too little")
 			return 0
 	return 1 / (1 + coeff)
 

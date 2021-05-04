@@ -23,6 +23,10 @@ def build_patch(img, r, c):
     coords = vectors+[r,c]
     return img[coords[:,0],coords[:,1]]
 
+def build_big_patch(img,r,c):
+    x = img[r-2:r+3,c-2:c+3,:]
+    return x.reshape(25,3)
+
 #returns indices for six most similar patches
 def similar_patch(patch, patches):
     norms = np.linalg.norm(patch - patches, axis=2)
