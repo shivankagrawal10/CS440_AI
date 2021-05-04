@@ -14,5 +14,5 @@ def w_tplus(w, x, y, alpha):
 	return w - (alpha * dL(w,x,y))
 
 def L(w, x, y):
-	return (y - f(w, x))**2
+	return abs(y - f(w, x))
 
