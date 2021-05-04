@@ -28,5 +28,14 @@ def L(w, x, y):
 	dot = np.dot(w, x)
 	return abs(y + .5 - (1*sigmoid(dot)))
 
+def quad(x):
+	quad = [i**2 for i in x]
+	for i in range(len(x)):
+		j = i + 1
+		while j < len(x):
+			quad.append(x[i] * x[j])
+			j += 1
+	return np.array(quad)
+
 
 

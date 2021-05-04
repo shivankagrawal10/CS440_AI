@@ -22,17 +22,18 @@ class improved_agent:
 
 	def build_model(self, r_g_b_ind):
 		rows, cols, _ = self.clr_img.shape
-		w_t = np.zeros(10)
-		w_tplus = np.zeros(10)
-		for i in range(10):
+		w_t = np.zeros(55)
+		w_tplus = np.zeros(55)
+		for i in range(55):
 			w_tplus[i] =  10 * self.rng.random() - 5
 			if w_tplus[i] == 0:
 				w_tplus[i] = 1
 		i = 0
 		losses = []
+		min_loss = 1
 		s = 0
 		e = 0
-		while i < 10000000:
+		while i < 1000000:
 			#calculating new weights
 			w_t = np.array(w_tplus)
 			r = self.rng.integers(1, high=rows-1)
@@ -41,7 +42,8 @@ class improved_agent:
 			#x = [np.max(a) for a in patch]
 			x = [((np.max(a) - 128) / 255) for a in patch]
 			x.insert(0, 1)
-			x = np.array(x)
+			#x = np.array(x)
+			x = gr.quad(x)
 			y = self.clr_img[r][c][r_g_b_ind]
 			y = (y - 128) / 255
 			alpha = self.minalpha + (1/2) * (self.maxalpha - self.minalpha) * (1 + np.cos((e/self.epochs) * math.pi))
@@ -59,21 +61,24 @@ class improved_agent:
 			patch = p.build_patch(self.gray_img, r, c)
 			x = [((np.max(a) - 128) / 255) for a in patch]
 			#x = [((np.max(a) - 128) / 255) for a in x ]
-
 			x.insert(0, 1)
-			x = np.array(x)
+			x = gr.quad(x)
+			#x = np.array(x)
 			y = self.clr_img[r][c][r_g_b_ind]
 			y = (y - 128) / 255
 			loss = gr.L(w_tplus, x, y)
 			#print(loss)
 			s += loss
-			if i % self.epochs == 0:
+			if e == self.epochs:
 				s /= self.epochs
 				losses.append(s)
 				s = 0
 				e = 0
 				print(losses[-1])
 				print(w_tplus)
+				if min_loss > losses[-1]:
+					min_loss = losses[-1]
+					i = -1
 
 				#self.alpha *= .999
 			i += 1
@@ -85,6 +90,10 @@ class improved_agent:
 	def run(self):
 		rows, cols, _ = self.clr_img.shape
 		div_line = cols // 2
+		print(self.red_model)
+		print(self.green_model)
+		print(self.blue_model)
+		input()
 		for row in range(rows):
 			if row == 0 or row == rows-1:
 				continue
@@ -111,5 +120,5 @@ class improved_agent:
 		plt.show()
 		return self.clr_img
 
-impr_agent = improved_agent("mountains.jpg", .01, .01, 5000)
+impr_agent = improved_agent("mountains.jpg", .01, 1, 100000)
 impr_agent.run()
