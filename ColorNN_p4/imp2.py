@@ -103,7 +103,8 @@ class improved_agent:
 				x = [(np.max(a) - 128) / 255 for a in patch]
 				#x = [((np.max(a) - 128) / 255) for a in x ]
 				x.insert(0, 1)
-				x = np.array(x)
+				#x = np.array(x)
+				x = gr.quad(x)
 				r = int(128 + 255 * gr.sigmoid(np.dot(self.red_model, x)))
 				g = int(128 + 255 * gr.sigmoid(np.dot(self.green_model, x)))
 				b = int(128 + 255 * gr.sigmoid(np.dot(self.blue_model, x)))
@@ -116,6 +117,7 @@ class improved_agent:
 				col += 1
 				print("Colored pixel", row, ",", col)
 			print("Progress", row / rows)
+		plt.imsave("imp_mount.jpg", self.clr_img)
 		plt.imshow(self.clr_img)
 		plt.show()
 		return self.clr_img
