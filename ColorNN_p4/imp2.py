@@ -33,7 +33,8 @@ class improved_agent:
 		min_loss = 1
 		s = 0
 		e = 0
-		while i < 1000000:
+		runs = 0
+		while i < 10000000:
 			#calculating new weights
 			w_t = np.array(w_tplus)
 			r = self.rng.integers(1, high=rows-1)
@@ -79,10 +80,10 @@ class improved_agent:
 				if min_loss > losses[-1]:
 					min_loss = losses[-1]
 					i = -1
-
 				#self.alpha *= .999
 			i += 1
 			e += 1
+			runs += 1
 			#print("Iteration", i, "complete.")
 		print("Done building model", r_g_b_ind)
 		return w_tplus
@@ -103,10 +104,11 @@ class improved_agent:
 				x = [(np.max(a) - 128) / 255 for a in patch]
 				#x = [((np.max(a) - 128) / 255) for a in x ]
 				x.insert(0, 1)
-				x = np.array(x)
-				r = int(128 + 255 * gr.sigmoid(np.dot(self.red_model, x)))
-				g = int(128 + 255 * gr.sigmoid(np.dot(self.green_model, x)))
-				b = int(128 + 255 * gr.sigmoid(np.dot(self.blue_model, x)))
+				#x = np.array(x)
+				x = gr.quad(x)
+				r = int(128 + 255 * (gr.sigmoid(np.dot(self.red_model, x)) - .5))
+				g = int(128 + 255 * (gr.sigmoid(np.dot(self.green_model, x)) - .5))
+				b = int(128 + 255 * (gr.sigmoid(np.dot(self.blue_model, x)) - .5))
 				#if (row % 10 == 0):
 				#	print(r)
 				#	print(g)
@@ -120,5 +122,5 @@ class improved_agent:
 		plt.show()
 		return self.clr_img
 
-impr_agent = improved_agent("mountains.jpg", .01, 1, 100000)
+impr_agent = improved_agent("mountains.jpg", .01, 2, 200000)
 impr_agent.run()

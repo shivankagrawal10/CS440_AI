@@ -26,7 +26,6 @@ class basic_agent:
 		self.img = np.array(plt.imread(self.img_path))
 		self.new_img = self.img.copy()
 		clustered = k_means.k_means(clusters,self.new_img)
-		
 		self.five_color = clustered.run() 
 		self.five_color = np.array(self.five_color).reshape(clusters,3)
 		print(self.five_color)
@@ -54,19 +53,26 @@ class basic_agent:
 			if row == 0 or row >= self.rows-1:
 				break
 			col = self.div_line
-			while col < self.div_line+20:#self.cols - 1:
+			while col < self.cols - 1:
+				print(row, col)
 				patch = p.build_patch(self.gray_img, row, col)
 				six_sim = p.similar_patch(patch, self.patches)
+				for i in range(6):
+					print(self.patches[six_sim[i]])
+				input()
 				new_clr = p.color_lookup(self.clustered_img, six_sim)
 				
 				#print(self.new_img[row,col-1,:])
 				#temp = [i for i in self.five_color[0]]
 				
-				self.new_img[row,col,:] = new_clr #np.array(temp)
+				#self.new_img[row,col,:] = new_clr #np.array(temp)
+				self.new_img[row][col] = new_clr
 				col += 1
 				#print("Colored pixel", row, ",", col)
 			print(f"Row: {row} | Progress {row / self.rows}")
+		plt.imshow(self.new_img)
+		plt.show()
 		
-#b_agent = basic_agent('mountains.jpg')
+b_agent = basic_agent('mountains.jpg')
 #b_agent = basic_agent('small_test.jpg')
-#b_agent.run()
+b_agent.run()
