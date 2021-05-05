@@ -44,17 +44,19 @@ class basic_agent:
 		#self.new_img.save("small_test.png")
 		#plt.imshow(self.new_img)
 		#plt.show()
-		clustered = k_means.k_means(10,self.new_img)
+		clustered = k_means.k_means(5,self.new_img)
 		
 		self.five_color = clustered.run() #fc.five_color(self.img_path) 
-		self.clr_img = clustered.clustered_rbg
+		self.clustered_img = clustered.clustered_rbg
 		self.gray_img = g.color_to_gray(self.img_path)
 		#self.gray_img = g.color_to_gray(self.img_path)
-		self.rows, self.cols, _ = self.clr_img.shape
+		self.rows, self.cols, _ = self.clustered_img.shape
 		self.div_line = self.cols // 2
 		self.patches = p.patchify(self.gray_img)
-		
+		#print(self.patches)
 		self.new_img[:,self.div_line:,:] = self.gray_img[:,self.div_line:,:]
+		#indexes = np.random.choice(np.arrange(self.patches.shape[0]),1000)
+		#self.patches = self.patches[indexes]
 		#plt.imshow(self.new_img)
 		#plt.show()
 		#print(self.new_img)
@@ -71,27 +73,31 @@ class basic_agent:
 		for thr in t:
 			thr.join()
 		self.new_img = np.array(temp,np.uint8).reshape(self.new_img.shape)
-		#plt.imshow(self.new_img)
-		#plt.show()
+		plt.imshow(self.new_img)
+		plt.show()
 		img = Image.fromarray(self.new_img, 'RGB')
-		img.save("clust_mount_10.jpg")
+		img.save("clust_mount_final.jpg")
 		return self.new_img
 
 	#@jit(target="cuda")
 	#@jit(nopython=True, parallel=True)
 	def thread_color(self,rows_complete,temp):
 		#temp_rgb = np.array(temp,np.uint8).reshape(self.new_img.shape)
-		while(rows_complete < self.rows-1):
+		while(rows_complete < (self.rows-1)):
 			#temp_rgb = np.array(temp,np.uint8).reshape(self.new_img.shape)
 			row = rows_complete
-			if row == 0 or row >= self.rows-1:
+			if row == 0 or row >= (self.rows-1):
 				break
 			rows_complete += self.threads
 			col = self.div_line
 			while col < self.cols - 1:
 				patch = p.build_patch(self.gray_img, row, col)
 				six_sim = p.similar_patch(patch, self.patches)
-				new_clr = p.color_lookup(self.five_color, six_sim)
+				new_clr = p.color_lookup(self.clustered_img, six_sim)
+				#print(type(patch))
+				#print(patch)
+				#print(six_sim)
+				#print(new_clr)
 				#print(self.new_img[row,col-1,:])
 				#self.new_img[row,col,:] = new_clr
 				#temp_rgb [row,col,:] = new_clr
