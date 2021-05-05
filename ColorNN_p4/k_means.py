@@ -19,7 +19,7 @@ class k_means:
         self.clustered_rbg = np.zeros(self.original_rbg.shape)
 
     def run(self):
-        print(self.centroids)
+        #print(self.centroids)
         while(True):
             #first.partition()
             self.partition2()
