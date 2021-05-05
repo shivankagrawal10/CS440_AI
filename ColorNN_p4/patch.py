@@ -30,7 +30,7 @@ def build_big_patch(img,r,c):
 #returns indices for six most similar patches
 def similar_patch(patch, patches):
     norms = np.linalg.norm(patch - patches, axis=2)
-    print(norms)
+    #print(norms)
     patch_norm = []
     for i in range(len(patches)):
         patch_norm.append((norms[i].sum(), i))

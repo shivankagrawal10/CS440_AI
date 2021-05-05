@@ -33,7 +33,7 @@ class basic_agent:
 		self.five_color = []
 		self.patches = []
 		#ensures 20 threads, change according to machine
-		self.threads = 1
+		self.threads = 40
 
 	def run(self):
 		self.img = np.array(plt.imread(self.img_path))
