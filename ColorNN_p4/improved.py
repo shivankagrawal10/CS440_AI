@@ -5,7 +5,7 @@ import patch as p
 import gray as g
 from numpy.random import default_rng
 import math
-
+from PIL import Image
 class improved_agent:
 
         def __init__(self, img_path, alpha):
@@ -30,7 +30,7 @@ class improved_agent:
                 time = []
                 s = 0
                 self.alpha = .1
-                iterr = 100000000
+                iterr = 10000
                 while i < iterr and (len(losses)<=1 or losses[-1]>10) and self.alpha > .005:
                         #calculating new weights
                         w_t = np.array(w_tplus)
@@ -115,10 +115,11 @@ class improved_agent:
                                 b = int(round(gr.sigmoid(np.dot(self.blue_model, x))*255))
                                 #print([r,g,b])
                                 #input()
-                                self.clr_img[row][col] = np.array([r,g,b])
+                                self.clr_img[row][col]= np.array([r,g,b])
                                 col += 1
                                 #print("Colored pixel", row, ",", col)
                         #print("Progress", row / rows)
+                plt.imsave("imp_mount.jpg", self.clr_img)
                 plt.imshow(self.clr_img)
                 plt.show()
                 return self.clr_img
