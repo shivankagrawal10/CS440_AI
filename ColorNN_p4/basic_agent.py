@@ -73,6 +73,6 @@ class basic_agent:
 		plt.imshow(self.new_img)
 		plt.show()
 		
-b_agent = basic_agent('mountains.jpg')
+#b_agent = basic_agent('mountains.jpg')
 #b_agent = basic_agent('small_test.jpg')
-b_agent.run()
+#b_agent.run()
