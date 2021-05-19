@@ -31,13 +31,22 @@ def build_big_patch(img,r,c):
 def similar_patch(patch, patches):
     norms = np.linalg.norm(patch - patches, axis=2)
     #print(norms)
+    
+    s_norms = np.sum(norms,axis=1)
+    s_norms = s_norms.argsort()[:6]
+    return s_norms
+    
+    '''
     patch_norm = []
-    for i in range(len(patches)):
+    for i in range(len(norms)):
         patch_norm.append((norms[i].sum(), i))
     patch_norm.sort()
     six_sim = patch_norm[:6]
     six_sim = [ind for (_, ind) in six_sim]
+    print(six_sim)
+    #[232, 465, 231, 698, 230, 464]
     return six_sim
+    '''
 
 #returns color to color pixel
 def color_lookup(five_color, patch_ind):
@@ -70,4 +79,3 @@ def lookup_coord(ind, bound):
     row = ind // bound
     col = ind % bound
     return row, col
-

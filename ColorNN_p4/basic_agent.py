@@ -33,55 +33,56 @@ class basic_agent:
 		self.five_color = []
 		self.patches = []
 		#ensures 20 threads, change according to machine
-		self.threads = 40
+		#find number of cores in this machine automatically
+		self.threads = 1
 
 	def run(self):
-		self.img = np.array(plt.imread(self.img_path))
-		self.new_img = self.img.copy()
-		#print(self.img)
-		#img = Image.fromarray(self.new_img, 'RGB')
-		#self.new_img = np.array(img.resize((40,80)))
-		#self.new_img.save("small_test.png")
-		#plt.imshow(self.new_img)
-		#plt.show()
-		clustered = k_means.k_means(5,self.new_img)
-		
-		self.five_color = clustered.run() #fc.five_color(self.img_path) 
-		self.clustered_img = clustered.clustered_rbg
-		self.gray_img = g.color_to_gray(self.img_path)
-		#self.gray_img = g.color_to_gray(self.img_path)
-		self.rows, self.cols, _ = self.clustered_img.shape
-		self.div_line = self.cols // 2
-		self.patches = p.patchify(self.gray_img)
-		#print(self.patches)
-		self.new_img[:,self.div_line:,:] = self.gray_img[:,self.div_line:,:]
-		#indexes = np.random.choice(np.arrange(self.patches.shape[0]),1000)
-		#self.patches = self.patches[indexes]
-		#plt.imshow(self.new_img)
-		#plt.show()
-		#print(self.new_img)
-		t=[]
-		temp = mp.Array("i",self.new_img.flatten())
-		#print(self.new_img.dtype)
-		#initializing thread for each core
-		for cores in range(self.threads):
-			print(cores)
-			#t.append(threading.Thread(target=self.thread_color,args=()))
-			pr=Process(target=self.thread_color,args=(self.rows_complete,temp))
-			t.append(pr)
-			pr.start()
-			self.rows_complete += 1
-		for thr in t:
-			thr.join()
-		self.new_img = np.array(temp,np.uint8).reshape(self.new_img.shape)
-		plt.imshow(self.new_img)
-		plt.show()
-		img = Image.fromarray(self.new_img, 'RGB')
-		img.save("clust_mount_final.jpg")
-		return self.new_img
+		if __name__ ==  '__main__':
+			self.img = np.array(plt.imread(self.img_path))
+			self.new_img = self.img.copy()
+			#print(self.img)
+			#img = Image.fromarray(self.new_img, 'RGB')
+			#self.new_img = np.array(img.resize((40,80)))
+			#self.new_img.save("small_test.png")
+			#plt.imshow(self.new_img)
+			#plt.show()
+			clustered = k_means.k_means(5,self.new_img)
+			
+			self.five_color = clustered.run() #fc.five_color(self.img_path) 
+			self.clustered_img = clustered.clustered_rbg
+			self.gray_img = g.color_to_gray(self.img_path)
+			self.rows, self.cols, _ = self.clustered_img.shape
+			self.div_line = self.cols // 2
+			self.patches = p.patchify(self.gray_img)
+			#print(self.patches)
+			self.new_img[:,self.div_line:,:] = self.gray_img[:,self.div_line:,:]
+			#indexes = np.random.choice(np.arrange(self.patches.shape[0]),1000)
+			#self.patches = self.patches[indexes]
+			t=[]
+			temp = mp.Array("i",self.new_img.flatten())
+			#initializing thread for each core
+			for cores in range(self.threads):
+				
+				print(cores)
+				#t.append(threading.Thread(target=self.thread_color,args=()))
+				
+				#passing self.rows_complete to ensure right value is passed not corrupted by increment in main thread
+				pr=Process(target=self.thread_color,args=(self.rows_complete,temp))
+				t.append(pr)
+				#this starts the thread
+				pr.start()
+				#increment happening
+				self.rows_complete += 1
+			for thr in t:
+				thr.join()
+			self.new_img = np.array(temp,np.uint8).reshape(self.new_img.shape)
+			plt.imshow(self.new_img)
+			plt.show()
+			img = Image.fromarray(self.new_img, 'RGB')
+			img.save("clust_mount_final.jpg")
+			return self.new_img
 
-	#@jit(target="cuda")
-	#@jit(nopython=True, parallel=True)
+
 	def thread_color(self,rows_complete,temp):
 		#temp_rgb = np.array(temp,np.uint8).reshape(self.new_img.shape)
 		while(rows_complete < (self.rows-1)):
@@ -95,23 +96,12 @@ class basic_agent:
 				patch = p.build_patch(self.gray_img, row, col)
 				six_sim = p.similar_patch(patch, self.patches)
 				new_clr = p.color_lookup(self.clustered_img, six_sim)
-				#print(type(patch))
-				#print(patch)
-				#print(six_sim)
-				#print(new_clr)
-				#print(self.new_img[row,col-1,:])
-				#self.new_img[row,col,:] = new_clr
-				#temp_rgb [row,col,:] = new_clr
 				for i in range(3):
 					temp [np.ravel_multi_index((row,col,i),(self.rows,self.cols,3))] = new_clr[i]
-				#print(self.new_img[row,col,:])
 				col += 1
 				#print("Colored pixel", row, ",", col)
-			#print(self.new_img[row,:,:])
-			#temp = mp.Array("i",temp_rgb.flatten())
 			print(f"Row: {row} | Progress {row / self.rows}")
-		#print(self.new_img)
 		
 b_agent = basic_agent('mountains.jpg')
-#b_agent = basic_agent('small_test.jpg')
+#b_agent = basic_agent('sm_mnt.jpeg')
 b_agent.run()
