@@ -76,8 +76,8 @@ class basic_agent:
 			for thr in t:
 				thr.join()
 			self.new_img = np.array(temp,np.uint8).reshape(self.new_img.shape)
-			plt.imshow(self.new_img)
-			plt.show()
+			#plt.imshow(self.new_img)
+			#plt.show()
 			img = Image.fromarray(self.new_img, 'RGB')
 			img.save("clust_mount_final.jpg")
 			return self.new_img
