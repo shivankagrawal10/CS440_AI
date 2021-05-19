@@ -34,7 +34,7 @@ class basic_agent:
 		self.patches = []
 		#ensures 20 threads, change according to machine
 		#find number of cores in this machine automatically
-		self.threads = 1
+		self.threads = 20
 
 	def run(self):
 		if __name__ ==  '__main__':

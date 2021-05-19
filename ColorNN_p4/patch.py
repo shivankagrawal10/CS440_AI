@@ -29,6 +29,8 @@ def build_big_patch(img,r,c):
 
 #returns indices for six most similar patches
 def similar_patch(patch, patches):
+    #patch=1X9 dimension. patches=Nrows X 9 dimension.
+    #"-": numpy minus. Result(norms)= Nrows X 9 dimension
     norms = np.linalg.norm(patch - patches, axis=2)
     #print(norms)
     
